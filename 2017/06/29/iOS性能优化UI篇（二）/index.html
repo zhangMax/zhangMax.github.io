@@ -1,0 +1,917 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="性能优化,UITableView,UIWebView,WKWebView," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Wonkey Zhang" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="书接上回，我们来聊一下UI性能优化的几大重点对象。 UITableView我相信每一位iOS开发人员写UITableView肯定都要写吐了，但是大家确定在写的时候都注意到这些原则or细节了吗？  尽量避免动态高度的cell，如果已确定控件的高度，直接使用tableView的rowHeight、sectionHeaderHeight和sectionFooterHeight设置高度，避免请求dele">
+<meta name="keywords" content="性能优化,UITableView,UIWebView,WKWebView">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能优化UI篇（二）">
+<meta property="og:url" content="http://wonkeyz.com/2017/06/29/iOS性能优化UI篇（二）/index.html">
+<meta property="og:site_name" content="Wonkey Zhang">
+<meta property="og:description" content="书接上回，我们来聊一下UI性能优化的几大重点对象。 UITableView我相信每一位iOS开发人员写UITableView肯定都要写吐了，但是大家确定在写的时候都注意到这些原则or细节了吗？  尽量避免动态高度的cell，如果已确定控件的高度，直接使用tableView的rowHeight、sectionHeaderHeight和sectionFooterHeight设置高度，避免请求dele">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-26/41893848.jpg">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-27/22309726.jpg">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-27/34929283.jpg">
+<meta property="og:updated_time" content="2017-10-27T10:36:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS性能优化UI篇（二）">
+<meta name="twitter:description" content="书接上回，我们来聊一下UI性能优化的几大重点对象。 UITableView我相信每一位iOS开发人员写UITableView肯定都要写吐了，但是大家确定在写的时候都注意到这些原则or细节了吗？  尽量避免动态高度的cell，如果已确定控件的高度，直接使用tableView的rowHeight、sectionHeaderHeight和sectionFooterHeight设置高度，避免请求dele">
+<meta name="twitter:image" content="http://owgqmweju.bkt.clouddn.com/17-10-26/41893848.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wonkeyz.com/2017/06/29/iOS性能优化UI篇（二）/"/>
+
+
+
+
+
+  <title> iOS性能优化UI篇（二） | Wonkey Zhang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wonkey Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/29/iOS性能优化UI篇（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS性能优化UI篇（二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T16:59:23+08:00">
+                2017-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>书接上回，我们来聊一下UI性能优化的几大重点对象。</p>
+<h3 id="UITableView"><a href="#UITableView" class="headerlink" title="UITableView"></a>UITableView</h3><p>我相信每一位iOS开发人员写<code>UITableView</code>肯定都要写吐了，但是大家确定在写的时候都注意到这些原则or细节了吗？</p>
+<ul>
+<li>尽量避免动态高度的cell，如果已确定控件的高度，直接使用<code>tableView</code>的<code>rowHeight</code>、<code>sectionHeaderHeight</code>和<code>sectionFooterHeight</code>设置高度，避免请求delegate。在<code>heightForRowAtIndexPath:</code>中尽量不使用<code>cellForRowAtIndexPath:</code>，如果你需要用到它，最好只用一次然后缓存结果。<a id="more"></a></li>
+<li>使用<code>dequeueReusableCellWithIdentifier:</code>或<code>dequeueReusableCellWithIdentifier:forIndexPath:</code>复用cell，后者需要搭配<code>registerClass/Nib:forCellReuseIdentifier:</code>使用，该方法会在默认没有cell可复用的时候自动创建一个新的cell出来，推荐使用后者。</li>
+<li>对于动态高度的cell，做对应标记，缓存行高。推荐使用sunnyxx大神的<a href="https://github.com/forkingdog/UITableView-FDTemplateLayoutCell" target="_blank" rel="external">UITableView-FDTemplateLayoutCell</a>。如果cell对应的模型没有发生变化，则不做相应的计算渲染处理。</li>
+<li>使用自定义视图构造的cell，要避免调用<code>layoutIfNeeded</code>每次对其进行布局。尽量固定cell子视图的尺寸，确保每个cell渲染所需时间最小化。<br>尽量使用不透明的子视图，包括cell本身，这点已经在上篇基本法中提过。<br>确保cell的子视图数量最少，避免耗费性能的操作，如图片的缩放、渐变等。<br>如果自定义cell的样式基本确定不会发生大的布局变化，或者在滑动时有明显的性能问题，那么你可能需要异步绘制这个cell，我会在自定义视图部分讲解。</li>
+<li>在快速滚动时如果出现了卡顿，那么你除了使用异步绘制cell，还可以考虑使用‘‘占位’’cell，这种方式在国内的App比较少见，如图：<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-26/41893848.jpg" alt="图1"><br>‘‘占位’’cell类似于占位图，它告诉用户这部分即将展示一些信息，当滚动速度降低到一定值时，再展示最终数据。部分代码实现如下：<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView &#123;</div><div class="line">    <span class="comment">// 通过scrollView的panGestureRecognizer获取滑动速率</span></div><div class="line">    <span class="keyword">self</span>.velocity = [scrollView.panGestureRecognizer velocityInView:<span class="keyword">self</span>.view];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath &#123;</div><div class="line">    <span class="comment">// 根据滑动速率做相应内容展示</span></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.velocity.y &gt; maxVelocity) &#123;</div><div class="line">        <span class="keyword">return</span> placeholderCell;</div><div class="line">    &#125;<span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> cell;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>还有一种sao套路是按需加载cell<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 按需加载 - 如果目标行与当前行相差超过指定行数，只在目标滚动范围的前后指定3行加载。</span></div><div class="line">- (<span class="keyword">void</span>)scrollViewWillEndDragging:(<span class="built_in">UIScrollView</span> *)scrollView withVelocity:(<span class="built_in">CGPoint</span>)velocity targetContentOffset:(<span class="keyword">inout</span> <span class="built_in">CGPoint</span> *)targetContentOffset&#123;</div><div class="line">    <span class="built_in">NSIndexPath</span> *ip = [<span class="keyword">self</span> indexPathForRowAtPoint:<span class="built_in">CGPointMake</span>(<span class="number">0</span>, targetContentOffset-&gt;y)];</div><div class="line">    <span class="built_in">NSIndexPath</span> *cip = [[<span class="keyword">self</span> indexPathsForVisibleRows] firstObject];</div><div class="line">    <span class="built_in">NSInteger</span> skipCount = <span class="number">8</span>;</div><div class="line">    <span class="keyword">if</span> (labs(cip.row - ip.row) &gt; skipCount) &#123;</div><div class="line">        <span class="built_in">NSArray</span> *temp = [<span class="keyword">self</span> indexPathsForRowsInRect:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, targetContentOffset-&gt;y, <span class="keyword">self</span>.width, <span class="keyword">self</span>.height)];</div><div class="line">        <span class="built_in">NSMutableArray</span> *arr = [<span class="built_in">NSMutableArray</span> arrayWithArray:temp];</div><div class="line">        <span class="keyword">if</span> (velocity.y &lt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="built_in">NSIndexPath</span> *indexPath = [temp lastObject];</div><div class="line">            <span class="keyword">if</span> (indexPath.row + <span class="number">3</span> &lt; datas.count) &#123;</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row+<span class="number">1</span> inSection:<span class="number">0</span>]];</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row+<span class="number">2</span> inSection:<span class="number">0</span>]];</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row+<span class="number">3</span> inSection:<span class="number">0</span>]];</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="built_in">NSIndexPath</span> *indexPath = [temp firstObject];</div><div class="line">            <span class="keyword">if</span> (indexPath.row &gt; <span class="number">3</span>) &#123;</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row<span class="number">-3</span> inSection:<span class="number">0</span>]];</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row<span class="number">-2</span> inSection:<span class="number">0</span>]];</div><div class="line">                [arr addObject:[<span class="built_in">NSIndexPath</span> indexPathForRow:indexPath.row<span class="number">-1</span> inSection:<span class="number">0</span>]];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        [needLoadArr addObjectsFromArray:arr];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 在`tableView:cellForRowAtIndexPath:`方法中加入判断：，修改样式</span></div><div class="line"><span class="keyword">if</span> (needLoadArr.count &gt; <span class="number">0</span></div><div class="line">    &amp;&amp;</div><div class="line">    [needLoadArr indexOfObject:indexPath] == <span class="built_in">NSNotFound</span>) &#123;</div><div class="line">        [cell clear];</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>详见<a href="https://github.com/johnil/VVeboTableViewDemo" target="_blank" rel="external">VVeboTableViewDemo</a></p>
+<h3 id="UIWebView、WKWebView"><a href="#UIWebView、WKWebView" class="headerlink" title="UIWebView、WKWebView"></a>UIWebView、WKWebView</h3><p>由于H5具有动态化，不用发版等优势，越来越多的H5页面出现的原生App中。苹果提供了两种加载H5的控件，<code>UIWebView</code>,<code>WKWebView</code>，<code>WKWebView</code>是iOS8的新特性，通过简单的测试即可发现UIWebView占用过多内存，且内存峰值更是夸张。WKWebView网页加载速度更快，占用内存更小，下面列举一些其它的优势：</p>
+<ul>
+<li>支持更多的H5特性</li>
+<li>60fps的滚动刷新率及内置手势</li>
+<li>与Safari相同的JavaScript引擎</li>
+<li>将<code>UIWebView</code>和<code>UIWebViewDelegate</code>重构成了14个类，3个协议，可以让开发者进行更细致的配置</li>
+</ul>
+<p>简直完爆<code>UIWebView</code>，所以想要优化你的webView，那么从现在开始弃<code>UIWebView</code>，用<code>WKWebView</code>吧！下面简单介绍一下<code>WKWebView</code>。  </p>
+<h4 id="加载页面"><a href="#加载页面" class="headerlink" title="加载页面"></a>加载页面</h4><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import<span class="meta-string">&lt;WebKit/WebKit.h&gt;</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)loadRequest &#123;</div><div class="line">    _wkWebView = [[<span class="built_in">WKWebView</span> alloc] initWithFrame:<span class="keyword">self</span>.view.bounds configuration:[<span class="built_in">WKWebViewConfiguration</span> new]]; </div><div class="line">    <span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:[<span class="built_in">NSURL</span> URLWithString:<span class="string">@"http://www.wonkeyz.com/"</span>]];</div><div class="line">    [_wkWebView loadRequest:request];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="原生调用JS"><a href="#原生调用JS" class="headerlink" title="原生调用JS"></a>原生调用JS</h4><p>1.使用<code>WKUserScript</code><br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// JS代码</span></div><div class="line"><span class="built_in">NSString</span> *js = <span class="string">@"window.alert('测试原生调用JS');"</span>;</div><div class="line"><span class="comment">// 根据JS代码初始化WKUserScript对象</span></div><div class="line"><span class="built_in">WKUserScript</span> *script = [[<span class="built_in">WKUserScript</span> alloc] initWithSource:js injectionTime:<span class="built_in">WKUserScriptInjectionTimeAtDocumentEnd</span> forMainFrameOnly:<span class="literal">YES</span>];</div><div class="line"><span class="comment">// 根据生成的WKUserScript对象，初始化WKWebViewConfiguration</span></div><div class="line"><span class="built_in">WKWebViewConfiguration</span> *config = [<span class="built_in">WKWebViewConfiguration</span> new];</div><div class="line">[config.userContentController addUserScript:script];</div></pre></td></tr></table></figure></p>
+<p>2.直接调用JS代码<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[_wkWebView evaluateJavaScript:js completionHandler:^(<span class="keyword">id</span> _Nullable, <span class="built_in">NSError</span> * _Nullable error) &#123;</div><div class="line">        <span class="comment">// 获取js方法返回值，回调操作等</span></div><div class="line">    &#125;];</div></pre></td></tr></table></figure></p>
+<h4 id="JS调用原生"><a href="#JS调用原生" class="headerlink" title="JS调用原生"></a>JS调用原生</h4><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 向JS注入OC方法</span></div><div class="line">[[_webView configuration].userContentController addScriptMessageHandler:<span class="keyword">self</span> name:<span class="string">@"ocMethod"</span>];</div><div class="line"></div><div class="line"><span class="comment">// JS调用</span></div><div class="line">window.webkit.messageHandlers.ocMethod.postMessage(value);</div><div class="line"></div><div class="line"><span class="comment">// 接收JS调用</span></div><div class="line">- (<span class="keyword">void</span>)userContentController:(<span class="built_in">WKUserContentController</span> *)userContentController didReceiveScriptMessage:(<span class="built_in">WKScriptMessage</span> *)message &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"JS 调用了 %@ 方法，传回参数 %@"</span>,message.name,message.body);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>就是这么简单！不过<code>WKWebView</code>还是有一些坑的，有很多相关文章，这里奉上几篇大佬的总结<a href="http://www.jianshu.com/p/403853b63537" target="_blank" rel="external">WKWebView的使用和各种坑的解决方法（OC＋Swift）</a>，<a href="http://www.jianshu.com/p/7bb5f15f1daa" target="_blank" rel="external">WKWebView学习笔记</a>。</p>
+<h3 id="自定义视图的绘制"><a href="#自定义视图的绘制" class="headerlink" title="自定义视图的绘制"></a>自定义视图的绘制</h3><p>我们来做一个简单的demo，如图：<img src="http://owgqmweju.bkt.clouddn.com/17-10-27/22309726.jpg" alt="图2"><br>正常代码布局就不写了，这里给出绘制代码<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)drawRect:(<span class="built_in">CGRect</span>)rect &#123;</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"drink.jpg"</span>];</div><div class="line">        <span class="built_in">CGRect</span> imageFrame = <span class="built_in">CGRectMake</span>(<span class="number">15</span>, <span class="number">15</span>, <span class="number">80</span>, <span class="number">80</span>);</div><div class="line">        [image drawInRect:imageFrame];</div><div class="line">    &#125;</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSString</span> *title = <span class="string">@"This is title,This is title,This is title,This is title"</span>;</div><div class="line">        <span class="built_in">UIFont</span> *titleFont = [<span class="built_in">UIFont</span> boldSystemFontOfSize:<span class="number">17</span>];</div><div class="line">        <span class="built_in">NSDictionary</span> *attrs = @&#123;<span class="built_in">NSFontAttributeName</span> : titleFont,</div><div class="line">                                <span class="built_in">NSForegroundColorAttributeName</span> : kTextColor</div><div class="line">                                &#125;;</div><div class="line">        <span class="built_in">CGRect</span> titleFrame = <span class="built_in">CGRectMake</span>(<span class="number">105</span>, <span class="number">10</span>, <span class="keyword">self</span>.width - <span class="number">125</span>, <span class="number">30</span>);</div><div class="line">        [title drawInRect:titleFrame withAttributes:attrs];</div><div class="line">    &#125;</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSString</span> *content = <span class="string">@"This is content,This is content,This is content,This is content,This is content"</span>;</div><div class="line">        <span class="built_in">UIFont</span> *contentFont = [<span class="built_in">UIFont</span> boldSystemFontOfSize:<span class="number">13</span>];</div><div class="line">        <span class="built_in">NSDictionary</span> *attrs = @&#123;<span class="built_in">NSFontAttributeName</span> : contentFont,</div><div class="line">                                <span class="built_in">NSForegroundColorAttributeName</span> : kLigthTextColor</div><div class="line">                                &#125;;</div><div class="line">        <span class="built_in">CGRect</span> contentFrame = <span class="built_in">CGRectMake</span>(<span class="number">105</span>, <span class="number">40</span>, <span class="keyword">self</span>.width - <span class="number">125</span>, <span class="number">40</span>);</div><div class="line">        [content drawInRect:contentFrame withAttributes:attrs];</div><div class="line">    &#125;</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSString</span> *time = <span class="string">@"This is time"</span>;</div><div class="line">        <span class="built_in">UIFont</span> *timeFont = [<span class="built_in">UIFont</span> boldSystemFontOfSize:<span class="number">12</span>];</div><div class="line">        <span class="built_in">NSDictionary</span> *attrs = @&#123;<span class="built_in">NSFontAttributeName</span> : timeFont,</div><div class="line">                                <span class="built_in">NSForegroundColorAttributeName</span> : kLigthTextColor</div><div class="line">                                &#125;;</div><div class="line">        <span class="built_in">CGRect</span> timeFrame = <span class="built_in">CGRectMake</span>(<span class="number">105</span>, <span class="number">80</span>, <span class="keyword">self</span>.width - <span class="number">125</span>, <span class="number">20</span>);</div><div class="line">        [time drawInRect:timeFrame withAttributes:attrs];</div><div class="line">    &#125;</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</div><div class="line">        <span class="built_in">CGContextSetStrokeColorWithColor</span>(context, kLineBackColor.CGColor);</div><div class="line">        <span class="built_in">CGContextStrokeRect</span>(context, <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="keyword">self</span>.height - kLineHeight, <span class="keyword">self</span>.width, kLineHeight));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>对比一下渲染时间，左为复合视图方式，右为直接绘制<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-27/34929283.jpg" alt="图3"><br>通过对比发现绘制得到的cell渲染时间缩短明显，对于更复杂的界面性能优势可想而知。因此，从性能角度来看，直接绘制视图是个不错的选择，但从维护角度来看，代码会比较难维护迭代，所以在某些界面样式稳定下来，你可以考虑重构成绘制视图。或者直接使用上文提到的高性能框架<a href="https://github.com/ibireme/YYKit" target="_blank" rel="external">YYkit</a>、<a href="https://github.com/TextureGroup/Texture" target="_blank" rel="external">Texture</a>。</p>
+<h3 id="Auto-Layout"><a href="#Auto-Layout" class="headerlink" title="Auto Layout"></a>Auto Layout</h3><p>再补充一下比较具有争议性的Auto Layout，它给我们日常开发带来了很大的便利，但便利的代价就是耗费更多的性能。<br>Auto Layout使用Cassowary算法作为约束求解工具包，他的复杂度为O（N），其中N是约束的数目，而不是元素的数目。这意味着，在一般情况下，为了确定视图中所有元素的位置和大小，可能有大概4N个方程要求解，而且方程花费的时间与元素的个数和包含的约束个数是不成比例的。当视图数量增加至几百个，直接设设置结构大小要比用自动布局快1000倍左右！(测试demo<a href="https://github.com/floriankugler/AutoLayoutProfiling" target="_blank" rel="external">AutoLayoutProfiling</a>)<br>更详细的分析请见<a href="https://draveness.me/layout-performance" target="_blank" rel="external">从 Auto Layout 的布局算法谈性能</a>。<br>所以当你为某个使用Auto Layout的界面性能消耗苦恼时，那么请改为代码布局吧😂  </p>
+<p>UI篇的性能优化就总结到这，菜鸟第一次写这类文章还请各位大佬多包涵，只求别辣到各位大佬的双眼😂</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/性能优化/" rel="tag"><i class="fa fa-tag"></i> 性能优化</a>
+          
+            <a href="/tags/UITableView/" rel="tag"><i class="fa fa-tag"></i> UITableView</a>
+          
+            <a href="/tags/UIWebView/" rel="tag"><i class="fa fa-tag"></i> UIWebView</a>
+          
+            <a href="/tags/WKWebView/" rel="tag"><i class="fa fa-tag"></i> WKWebView</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/iOS性能优化UI篇（一）/" rel="next" title="iOS性能优化UI篇（一）">
+                <i class="fa fa-chevron-left"></i> iOS性能优化UI篇（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/28/在对象dealloc时做一些操作/" rel="prev" title="在对象dealloc时做一些操作">
+                在对象dealloc时做一些操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Wonkey Zhang" />
+          <p class="site-author-name" itemprop="name">Wonkey Zhang</p>
+           
+              <p class="site-description motion-element" itemprop="description">没人能在我的bgm里打败我🤓</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangMax" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/14e035556f07" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-heart"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/2804106015/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#UITableView"><span class="nav-number">1.</span> <span class="nav-text">UITableView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UIWebView、WKWebView"><span class="nav-number">2.</span> <span class="nav-text">UIWebView、WKWebView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#加载页面"><span class="nav-number">2.1.</span> <span class="nav-text">加载页面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原生调用JS"><span class="nav-number">2.2.</span> <span class="nav-text">原生调用JS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JS调用原生"><span class="nav-number">2.3.</span> <span class="nav-text">JS调用原生</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义视图的绘制"><span class="nav-number">3.</span> <span class="nav-text">自定义视图的绘制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Auto-Layout"><span class="nav-number">4.</span> <span class="nav-text">Auto Layout</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-hand-o-right"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wonkey Zhang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

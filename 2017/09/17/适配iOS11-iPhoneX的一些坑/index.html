@@ -1,0 +1,900 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="适配iOS11,适配iPhoneX," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Wonkey Zhang" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前阵子项目开发忙成狗，就一直没做iOS11的适配，直到XcodeGM版发布后，我胸有成竹的在iPhoneX上跑起项目，整个人都凉透了…下面总结一下我遇到的坑，不是很全面，日后补充。">
+<meta name="keywords" content="适配iOS11,适配iPhoneX">
+<meta property="og:type" content="article">
+<meta property="og:title" content="适配iOS11&amp;iPhoneX的一些坑">
+<meta property="og:url" content="http://wonkeyz.com/2017/09/17/适配iOS11-iPhoneX的一些坑/index.html">
+<meta property="og:site_name" content="Wonkey Zhang">
+<meta property="og:description" content="前阵子项目开发忙成狗，就一直没做iOS11的适配，直到XcodeGM版发布后，我胸有成竹的在iPhoneX上跑起项目，整个人都凉透了…下面总结一下我遇到的坑，不是很全面，日后补充。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/702870-11488fe68c9d145b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-23/31263530.jpg">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/702870-71705661b4518de5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/702870-4db780c96ed7f4b5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-10-23T02:03:31.585Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="适配iOS11&amp;iPhoneX的一些坑">
+<meta name="twitter:description" content="前阵子项目开发忙成狗，就一直没做iOS11的适配，直到XcodeGM版发布后，我胸有成竹的在iPhoneX上跑起项目，整个人都凉透了…下面总结一下我遇到的坑，不是很全面，日后补充。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/702870-11488fe68c9d145b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wonkeyz.com/2017/09/17/适配iOS11-iPhoneX的一些坑/"/>
+
+
+
+
+
+  <title> 适配iOS11&iPhoneX的一些坑 | Wonkey Zhang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wonkey Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/09/17/适配iOS11-iPhoneX的一些坑/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                适配iOS11&iPhoneX的一些坑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-17T16:09:08+08:00">
+                2017-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前阵子项目开发忙成狗，就一直没做iOS11的适配，直到XcodeGM版发布后，我胸有成竹的在iPhoneX上跑起项目，整个人都凉透了…下面总结一下我遇到的坑，不是很全面，日后补充。</p>
+<a id="more"></a>
+<h3 id="导航栏"><a href="#导航栏" class="headerlink" title="导航栏"></a>导航栏</h3><h4 id="导航栏高度的变化"><a href="#导航栏高度的变化" class="headerlink" title="导航栏高度的变化"></a>导航栏高度的变化</h4><p>iOS11之前导航栏默认高度为64pt(<strong>这里高度指statusBar + NavigationBar</strong>)，iOS11之后如果设置了<code>prefersLargeTitles = YES</code>则为96pt，默认情况下还是64pt，但在iPhoneX上由于刘海的出现statusBar由以前的20pt变成了44pt，所以iPhoneX上高度变为88pt，如果项目里隐藏了导航栏加了自定义按钮之类的，这里需要注意适配一下。</p>
+<h4 id="导航栏图层及对titleView布局的影响"><a href="#导航栏图层及对titleView布局的影响" class="headerlink" title="导航栏图层及对titleView布局的影响"></a>导航栏图层及对titleView布局的影响</h4><p>iOS11之前导航栏的title是添加在<code>UINavigationItemView</code>上面，而navigationBarButton则直接添加在<code>UINavigationBar</code>上面，如果设置了titleView，则titleView也是直接添加在<code>UINavigationBar</code>上面。iOS11之后，大概因为<code>largeTitle</code>的原因，视图层级发生了变化，如果没有给titleView赋值，则titleView会直接添加在<code>_UINavigationBarContentView</code>上面，如果赋值了titleView，则会把titleView添加在<code>_UITAMICAdaptorView</code>上，而navigationBarButton被加在了<code>_UIButtonBarStackView</code>上，然后他们都被加在了<code>_UINavigationBarContentView</code>上，如图：<br><img src="http://upload-images.jianshu.io/upload_images/702870-11488fe68c9d145b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图1"><br>所以如果你的项目是自定义的navigationBar，那么在iOS11上运行就可能出现布局错乱的bug，解决办法是重写<code>UINavigationBar</code>的<code>layoutSubviews</code>方法，调整布局，上代码：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)layoutSubviews &#123;</div><div class="line">    [<span class="keyword">super</span> layoutSubviews];</div><div class="line"></div><div class="line">    <span class="comment">//注意导航栏及状态栏高度适配</span></div><div class="line">    <span class="keyword">self</span>.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">CGRectGetWidth</span>(<span class="keyword">self</span>.frame), naviBarHeight);</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">UIView</span> *view <span class="keyword">in</span> <span class="keyword">self</span>.subviews) &#123;</div><div class="line">        <span class="keyword">if</span>([<span class="built_in">NSStringFromClass</span>([view <span class="keyword">class</span>]) containsString:<span class="string">@"Background"</span>]) &#123;</div><div class="line">            view.frame = <span class="keyword">self</span>.bounds;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ([<span class="built_in">NSStringFromClass</span>([view <span class="keyword">class</span>]) containsString:<span class="string">@"ContentView"</span>]) &#123;</div><div class="line">            <span class="built_in">CGRect</span> frame = view.frame;</div><div class="line">            frame.origin.y = statusBarHeight;</div><div class="line">            frame.size.height = <span class="keyword">self</span>.bounds.size.height - frame.origin.y;</div><div class="line">            view.frame = frame;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>再补充一点，看了<a href="http://www.jianshu.com/p/26fc39135c34" target="_blank" rel="external">简书App适配iOS11</a>发现titleView支持<code>autolayout</code>，这要求titleView必须是能够自撑开的或实现了<code>- intrinsicContentSize</code>方法<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">CGSize</span>)intrinsicContentSize &#123;</div><div class="line">    <span class="keyword">return</span> <span class="built_in">UILayoutFittingExpandedSize</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="继承自UIScrollView的视图偏移问题"><a href="#继承自UIScrollView的视图偏移问题" class="headerlink" title="继承自UIScrollView的视图偏移问题"></a>继承自UIScrollView的视图偏移问题</h3><p>大家在iOS11设备上运行出现最多问题应该就是<code>tableview</code>莫名奇妙的偏移20pt或者64pt了。。原因是iOS11弃用了<code>automaticallyAdjustsScrollViewInsets</code>属性，取而代之的是<code>UIScrollView</code>新增了<code>contentInsetAdjustmentBehavior</code>属性，这一切的罪魁祸首都是新引入的<code>safeArea</code>，关于<code>safeArea</code>适配这篇文章<a href="http://www.jianshu.com/p/efbc8619d56b" target="_blank" rel="external">iOS 11 安全区域适配总结</a>讲的很详细，感兴趣的可以看下，我直接贴适配代码，因为低版本直接用<code>contentInsetAdjustmentBehavior</code>会报警告，所有定义了如下的宏（感谢<a href="http://www.jianshu.com/u/634f3d1c7c22" target="_blank" rel="external">@炒鸡范</a>的指正，之前的宏犯了个低级错误…现改为）<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#define  adjustsScrollViewInsets(scrollView)\</span></div><div class="line"><span class="keyword">do</span> &#123;\</div><div class="line">_Pragma(<span class="string">"clang diagnostic push"</span>)\</div><div class="line">_Pragma(<span class="string">"clang diagnostic ignored \"-Warc-performSelector-leaks\""</span>)\</div><div class="line"><span class="keyword">if</span> ([scrollView respondsToSelector:<span class="built_in">NSSelectorFromString</span>(<span class="string">@"setContentInsetAdjustmentBehavior:"</span>)]) &#123;\</div><div class="line"><span class="built_in">NSMethodSignature</span> *signature = [<span class="built_in">UIScrollView</span> instanceMethodSignatureForSelector:<span class="keyword">@selector</span>(setContentInsetAdjustmentBehavior:)];\</div><div class="line"><span class="built_in">NSInvocation</span> *invocation = [<span class="built_in">NSInvocation</span> invocationWithMethodSignature:signature];\</div><div class="line"><span class="built_in">NSInteger</span> argument = <span class="number">2</span>;\</div><div class="line">invocation.target = scrollView;\</div><div class="line">invocation.selector = <span class="keyword">@selector</span>(setContentInsetAdjustmentBehavior:);\</div><div class="line">[invocation setArgument:&amp;argument atIndex:<span class="number">2</span>];\</div><div class="line">[invocation retainArguments];\</div><div class="line">[invocation invoke];\</div><div class="line">&#125;\</div><div class="line">_Pragma(<span class="string">"clang diagnostic pop"</span>)\</div><div class="line">&#125; <span class="keyword">while</span> (<span class="number">0</span>)</div></pre></td></tr></table></figure></p>
+<p>还有的发现某些界面<code>tableView</code>的<code>sectionHeader</code>、<code>sectionFooter</code>高度与设置不符的问题，在iOS11中如果不实现 <code>-tableView: viewForHeaderInSection:</code>和<code>-tableView: viewForFooterInSection:</code> ，则<code>-tableView: heightForHeaderInSection:</code>和<code>- tableView: heightForFooterInSection:</code>不会被调用，导致它们都变成了默认高度，这是因为<code>tableView</code>在iOS11默认使用<code>Self-Sizing</code>，<code>tableView</code>的<code>estimatedRowHeight</code>、<code>estimatedSectionHeaderHeight</code>、 <code>estimatedSectionFooterHeight</code>三个高度估算属性由默认的0变成了<code>UITableViewAutomaticDimension</code>，解决办法简单粗暴，就是实现对应方法或把这三个属性设为0。</p>
+<p>如果你使用了<code>Masonry</code>，某些界面需要适配需要适配<code>safeArea</code>，可以试试下面这段代码<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (@available(iOS <span class="number">11.0</span>, *)) &#123;</div><div class="line">    make.edges.equalTo()(<span class="keyword">self</span>.view.safeAreaInsets)</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    make.edges.equalTo()(<span class="keyword">self</span>.view)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="相册访问权限"><a href="#相册访问权限" class="headerlink" title="相册访问权限"></a>相册访问权限</h3><p>看其他适配文章上对iOS11相册权限调整的说明是“iOS11把 <a href="https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW17" target="_blank" rel="external">NSPhotoLibraryUsageDescription</a> 替换成了<a href="https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73" target="_blank" rel="external">NSPhotoLibraryAddUsageDescription</a>”，奇怪的是我的项目并没有添加<code>NSPhotoLibraryAddUsageDescription</code>，在访问相册时也没发生crash，后来在仔细阅读了官方文档才发现<code>NSPhotoLibraryAddUsageDescription</code>只针对相册存储权限，在iOS11上系统默认打开了用户相册的访问权限，如果应用需要存储权限就需要添加这个key，否则就会crash。</p>
+<h3 id="AppIcon"><a href="#AppIcon" class="headerlink" title="AppIcon"></a>AppIcon</h3><p>在iOS11上发现了一个奇怪的现象，APP在启动图标会出现黑边，如图（处女座实在忍不了…）<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-23/31263530.jpg" alt="图2"><br>原因是iOS11修改了App启动动画，如果你的App图标有圆角那么就会变成这个鸟样了…所有图标都换成直角就好了，具体规范见<a href="https://developer.apple.com/design/" target="_blank" rel="external">Human Interface Guidelines-App Icon</a>，还是要听苹果爸爸的话啊…</p>
+<h3 id="iPhoneX"><a href="#iPhoneX" class="headerlink" title="iPhoneX"></a>iPhoneX</h3><h4 id="LaunchImage"><a href="#LaunchImage" class="headerlink" title="LaunchImage"></a>LaunchImage</h4><p>关于iPhoneX(我就不吐槽刘海了…)，如果你的APP在iPhoneX上运行发现没有充满屏幕，上下有黑色区域，那么你应该也像我一样<code>LaunchImage</code>没有用<code>storyboard</code>而是用的<code>Assets</code>，解决办法如图，启动图的尺寸为<code>1125x2436</code>，or you can <a href="http://www.jianshu.com/p/77054dccafdb" target="_blank" rel="external">iOS开发时如何使用 Launch Screen Storyboard</a>。<br><img src="http://upload-images.jianshu.io/upload_images/702870-71705661b4518de5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图2"></p>
+<h4 id="TabBarController"><a href="#TabBarController" class="headerlink" title="TabBarController"></a>TabBarController</h4><p>如果你使用了原生tabBar，系统会自动适配，因为我们的项目用了第三方的<code>TabBarController</code>，在iPhoneX运行，tabBar看起来怪怪的(<strong>如果不确定你的项目tabBar在iPhoneX上看起来是否正常，可以参照模拟器的照片APP，一看便知</strong>)…估计作者要等到猴年马月才适配iPhoneX，项目又着急上线，就自己改了下，主要是<code>tabBar</code>高度及<code>tabBarItem</code>偏移适配，iPhoneX由于底部安全区的原因<code>UITabBar</code>高度由49pt变成了83pt，多出来的34pt是空白手势区域。可以通过判断机型来修改相关界面代码，方式有两种，通过分辨率判断：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#define kDevice_Is_iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)</span></div></pre></td></tr></table></figure></p>
+<p>通过设备名称判断：<br>@”iPhone10,1” : @”iPhone 8”,<br>@”iPhone10,4” : @”iPhone 8”,<br>@”iPhone10,2” : @”iPhone 8 Plus”,<br>@”iPhone10,5” : @”iPhone 8 Plus”,<br>@”iPhone10,3” : @”iPhone X”,<br>@”iPhone10,6” : @”iPhone X”,<br>这里推荐使用<a href="https://github.com/squarefrog/UIDeviceIdentifier" target="_blank" rel="external">UIDeviceIdentifier</a>。</p>
+<p>目前遇到的就这些坑，欢迎大家指正补充~</p>
+<p>作为一名iOS开发人员，想到当年嘲笑Android开发蛋疼的适配各种机型心情如图…<br><img src="http://upload-images.jianshu.io/upload_images/702870-4db780c96ed7f4b5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+<p>最后奉上WWDC官方视频：</p>
+<p><a href="https://developer.apple.com/videos/play/wwdc2017/204/" target="_blank" rel="external">Updating Your App for iOS 11</a></p>
+<p><a href="https://developer.apple.com/videos/play/fall2017/201/" target="_blank" rel="external">Building Apps for iPhone X</a></p>
+<p><a href="https://developer.apple.com/videos/play/fall2017/801/" target="_blank" rel="external">Designing for iPhone X</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/适配iOS11/" rel="tag"><i class="fa fa-tag"></i> 适配iOS11</a>
+          
+            <a href="/tags/适配iPhoneX/" rel="tag"><i class="fa fa-tag"></i> 适配iPhoneX</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/28/在对象dealloc时做一些操作/" rel="next" title="在对象dealloc时做一些操作">
+                <i class="fa fa-chevron-left"></i> 在对象dealloc时做一些操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Wonkey Zhang" />
+          <p class="site-author-name" itemprop="name">Wonkey Zhang</p>
+           
+              <p class="site-description motion-element" itemprop="description">没人能在我的bgm里打败我🤓</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangMax" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/14e035556f07" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-heart"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/2804106015/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#导航栏"><span class="nav-number">1.</span> <span class="nav-text">导航栏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#导航栏高度的变化"><span class="nav-number">1.1.</span> <span class="nav-text">导航栏高度的变化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#导航栏图层及对titleView布局的影响"><span class="nav-number">1.2.</span> <span class="nav-text">导航栏图层及对titleView布局的影响</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#继承自UIScrollView的视图偏移问题"><span class="nav-number">2.</span> <span class="nav-text">继承自UIScrollView的视图偏移问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相册访问权限"><span class="nav-number">3.</span> <span class="nav-text">相册访问权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AppIcon"><span class="nav-number">4.</span> <span class="nav-text">AppIcon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iPhoneX"><span class="nav-number">5.</span> <span class="nav-text">iPhoneX</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LaunchImage"><span class="nav-number">5.1.</span> <span class="nav-text">LaunchImage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TabBarController"><span class="nav-number">5.2.</span> <span class="nav-text">TabBarController</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-hand-o-right"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wonkey Zhang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

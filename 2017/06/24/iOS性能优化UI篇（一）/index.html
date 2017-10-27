@@ -1,0 +1,943 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="性能优化," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Wonkey Zhang" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="这是一个老生常谈的话题，程序猿的一生除了在编译、写bug、改bug，就是在不断地重构优化，优化的点也多种多样，其中最直观有效的就是UI部分的优化了，这方面有很多相关资料，也有如YYkit、Texture这种神级框架从根源上解决了卡顿的问题。作为菜鸟的我无法像大佬们一样从根源上分析解决UI性能问题，只能写一篇比较基础的文章，总结一下常用的控件的使用注意点，希望对你的日常开发有帮助~">
+<meta name="keywords" content="性能优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能优化UI篇（一）">
+<meta property="og:url" content="http://wonkeyz.com/2017/06/24/iOS性能优化UI篇（一）/index.html">
+<meta property="og:site_name" content="Wonkey Zhang">
+<meta property="og:description" content="这是一个老生常谈的话题，程序猿的一生除了在编译、写bug、改bug，就是在不断地重构优化，优化的点也多种多样，其中最直观有效的就是UI部分的优化了，这方面有很多相关资料，也有如YYkit、Texture这种神级框架从根源上解决了卡顿的问题。作为菜鸟的我无法像大佬们一样从根源上分析解决UI性能问题，只能写一篇比较基础的文章，总结一下常用的控件的使用注意点，希望对你的日常开发有帮助~">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-19/50317192.jpg">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-10-20/33841778.jpg">
+<meta property="og:updated_time" content="2017-10-26T09:16:53.935Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS性能优化UI篇（一）">
+<meta name="twitter:description" content="这是一个老生常谈的话题，程序猿的一生除了在编译、写bug、改bug，就是在不断地重构优化，优化的点也多种多样，其中最直观有效的就是UI部分的优化了，这方面有很多相关资料，也有如YYkit、Texture这种神级框架从根源上解决了卡顿的问题。作为菜鸟的我无法像大佬们一样从根源上分析解决UI性能问题，只能写一篇比较基础的文章，总结一下常用的控件的使用注意点，希望对你的日常开发有帮助~">
+<meta name="twitter:image" content="http://owgqmweju.bkt.clouddn.com/17-10-19/50317192.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wonkeyz.com/2017/06/24/iOS性能优化UI篇（一）/"/>
+
+
+
+
+
+  <title> iOS性能优化UI篇（一） | Wonkey Zhang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wonkey Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/24/iOS性能优化UI篇（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS性能优化UI篇（一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T14:22:03+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> 这是一个老生常谈的话题，程序猿的一生除了在编译、写bug、改bug，就是在不断地重构优化，优化的点也多种多样，其中最直观有效的就是UI部分的优化了，这方面有很多相关资料，也有如<a href="https://github.com/ibireme/YYKit" target="_blank" rel="external">YYkit</a>、<a href="https://github.com/TextureGroup/Texture" target="_blank" rel="external">Texture</a>这种神级框架从根源上解决了卡顿的问题。作为菜鸟的我无法像大佬们一样从根源上分析解决UI性能问题，只能写一篇比较基础的文章，总结一下常用的控件的使用注意点，希望对你的日常开发有帮助~<br> <a id="more"></a></p>
+<h3 id="基本法"><a href="#基本法" class="headerlink" title="基本法"></a>基本法</h3><p>先来一波UI操作的基本法则：</p>
+<ul>
+<li>尽量减少在主线程中的操作，避免阻塞主线程。执行的操作越多就意味着越高的丢帧率，从而导致丢帧卡顿。</li>
+<li>尽量保持视图的扁平化，避免视图的多层嵌套。<br>只要给视图添加子视图，或其子视图布局发生变化都会触发父视图的<code>layoutSubviews</code>方法，如果一个视图被塞了很多子视图，性能消耗可想而知。那么这种情况如何避免呢？最好的方法是自定义视图绘制。这样只会触发一个视图的绘制方法，而不是多个子视图的，同时避免了父视图多次调用<code>layoutSubviews</code>和<code>drawRect:</code>方法，具体操作文中会给出demo。  </li>
+<li>尽量使用不透明视图。<br>当一个view是透明的，iOS需要渲染一个像素两次或多次，这是因为一个像素同时属于很多subviews。这是一个非常耗时的过程。不透明的视图可以极大地提高渲染的速度。因此如非必要，可以将table cell及其子视图的<code>opaque</code>属性设为YES（默认值）。</li>
+<li>一些情况下避免使用具有通用目的及功能丰富的控件，系统控件虽然方便，但有时也会带来不必要的消耗，你可以通过封装视图绘制内容来代替。如只显示大段纯文本，那么不必使用功能复杂的<code>UILabel</code>。</li>
+<li>尽量延迟加载、重用复杂视图。<br>这点我相信大家在使用<code>UITableView</code>、<code>UICollectionView</code>时都深有体会，如果你对机制足够了解，那么在使用<code>UIScrollView</code>时也可以尝试使用重用机制。</li>
+<li>尽量避免出现较大的xib或storyboard。sb固然强大，但整个XML文件在使用之前必须被解析和加载，所以应该最小化sb中的单元数目，创建多个sb或xib，这样不仅有助于减少应用启动时间，还能降低整体内存消耗。</li>
+</ul>
+<p>聊完基本法，我们来聊一下几个常见视图，看看有哪些性能小技巧。</p>
+<h4 id="UILabel"><a href="#UILabel" class="headerlink" title="UILabel"></a>UILabel</h4><p>这绝对是你用的最多的控件，看似简单，但你真的了解它的性能消耗点吗？先来看看他有多复杂。<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-19/50317192.jpg" alt="图1"><br>图中的每一项设置都会增加<code>UILabel</code>的渲染代价，具体步骤如下：<br>1.使用字体样式及要被渲染的文本时，计算需要的像素数，这是一个消耗较大的过程，应尽量少做。<br>2.检查要被渲染的宽度。<br>3.检查<code>numberOfLines</code>，计算将要展示的行数。<br>4.<code>sizeToFit</code>是否被调用，调用则计算高度，未调用则检查当前尺寸是否能展示完整内容。<br>5.如果size不够展示，则使用<code>lineBreakMode</code>确定隐藏或截断的位置。<br>6.检查其他配置选项，如纯文本or富文本，富文本的样式，对齐方式，自动收缩等。<br>7.最后使用字体、类型及颜色等渲染最终显示的文本。<br>整个过程下来的渲染代价不容小觑，所以平时使用要避免一些不必要的性能浪费。<br>ps：有时会发现label的文字变模糊，那么你需要检查一下label的frame是否都为整数。</p>
+<h4 id="UIButton"><a href="#UIButton" class="headerlink" title="UIButton"></a>UIButton</h4><p>按钮同样无处不在，样式多变、功能强大的它渲染方式主要有以下四种：</p>
+<ul>
+<li>使用自定义文本默认渲染</li>
+<li>全尺寸资源渲染</li>
+<li>可变尺寸资源渲染</li>
+<li>使用<code>CALayer</code>和贝塞尔曲线自定义绘制</li>
+</ul>
+<p>下表简单列出了几种渲染方式的利弊。具体见<a href="https://robots.thoughtbot.com/designing-for-ios-taming-uibutton#advantages-of-bezier-approach" target="_blank" rel="external">Designing for iOS: Taming UIButton</a>。</p>
+<table>
+<thead>
+<tr>
+<th>渲染方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自定义文本</td>
+<td>简单易用</td>
+<td>样式单一</td>
+</tr>
+<tr>
+<td>全尺寸资源</td>
+<td>可自定义背景图 <br> 样式多变 <br> 可实现A/B测试</td>
+<td>图片导致ipa包变大</td>
+</tr>
+<tr>
+<td>可变尺寸资源</td>
+<td>ipa包大小增量较全尺寸小</td>
+<td>资源的任何更改可能都会重新计算<code>UIEdgeInsets</code></td>
+</tr>
+<tr>
+<td>自定义绘制</td>
+<td>高度自定义样式</td>
+<td>随着迭代代码回越发臃肿</td>
+</tr>
+</tbody>
+</table>
+<p>通过上面的比较，你需要权衡一下利弊，到底是要性能能还是要ipa包保持合适的大小。</p>
+<h4 id="UIImageView"><a href="#UIImageView" class="headerlink" title="UIImageView"></a>UIImageView</h4><p>图像的使用也很简单，但在渲染代价较大的UI元素中，图像首屈一指。在使用UIImage、UIImageView时，注意以下几点有助于性能提升：</p>
+<ul>
+<li>加载图片的方式有三种<code>imageNamed:</code>、<code>imageWithContentsOfFile:</code>、<code>imageWithData:</code>，正确选择图片加载方式能够对内存优化起到很大的作用。<br><code>imageNamed:</code>优点在于可以缓存已经加载的图片，确保内容只被加载至内存一次，这对于图像的重复利用是非常有优势的。对于常用的小图推荐使用该方法，可以节省出每次都从磁盘加载图片的时间，这样能更好的响应用户的操作。<br><code>imageWithContentsOfFile:</code>和<code>imageWithData:</code>这两种方法的本质是一样的， 都是简单的加载图片，并不会将图片缓存起来，图像会被系统以数据方式加载到界面。一些不常用的大图推荐使用这两种方法，这样就不会缓存这些图片占用内存。</li>
+<li>对于网络图像，使用高性能的图像缓存库，如<a href="https://github.com/ibireme/YYWebImage" target="_blank" rel="external">YYWebImage</a>、<a href="https://github.com/rs/SDWebImage" target="_blank" rel="external">SDWebImage</a>。</li>
+<li>在图片格式的选择上同样很有讲究，选择合适的格式能够为你的应用带来最佳体验，这里奉上YY大神的博文<a href="https://blog.ibireme.com/2015/11/02/mobile_image_benchmark/" target="_blank" rel="external">移动端图片格式调研</a>。</li>
+<li>载入的图片与<code>UIImageView</code>尺寸相同。因为调整图片尺寸是一个性能消耗较大的操作，如果图像在<code>UIScrollView</code>中，则消耗更大。如果图片来自网络下载，那么尽量做到下载的图片与视图尺寸匹配，或者对图片进行预处理，调整尺寸。</li>
+<li>在非主线程中解压JPG/PNG图片，最好在一个专用队列中执行。</li>
+<li>在一些界面的实现上，确定是否真的需要图片。如展示一个评分控件<img src="http://owgqmweju.bkt.clouddn.com/17-10-20/33841778.jpg" alt="enter image description here">，那么最好通过直接绘制，调整透明度或覆盖来实现，而不是使用多张图片。类似情况的取舍既可以优化性能，还能给安装包瘦身。</li>
+</ul>
+<p>先总结到这里，下篇我会总结一些关于<code>UITableView</code>、<code>WebView</code>和自定义视图的性能优化点，敬请期待！</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/性能优化/" rel="tag"><i class="fa fa-tag"></i> 性能优化</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/20/仿Facebook点赞动画/" rel="next" title="仿Facebook点赞动画">
+                <i class="fa fa-chevron-left"></i> 仿Facebook点赞动画
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/29/iOS性能优化UI篇（二）/" rel="prev" title="iOS性能优化UI篇（二）">
+                iOS性能优化UI篇（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Wonkey Zhang" />
+          <p class="site-author-name" itemprop="name">Wonkey Zhang</p>
+           
+              <p class="site-description motion-element" itemprop="description">没人能在我的bgm里打败我🤓</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangMax" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/14e035556f07" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-heart"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/2804106015/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本法"><span class="nav-number">1.</span> <span class="nav-text">基本法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UILabel"><span class="nav-number">1.1.</span> <span class="nav-text">UILabel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UIButton"><span class="nav-number">1.2.</span> <span class="nav-text">UIButton</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UIImageView"><span class="nav-number">1.3.</span> <span class="nav-text">UIImageView</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-hand-o-right"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wonkey Zhang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
