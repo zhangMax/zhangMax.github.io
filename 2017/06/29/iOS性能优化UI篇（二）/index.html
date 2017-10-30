@@ -109,7 +109,7 @@
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: '0',
+      userId: 'undefined',
       author: '博主'
     },
     algolia: {
@@ -470,6 +470,10 @@
           
   <div class="comments" id="comments">
     
+       
+         <div id="gitment-container"></div>
+       
+    
   </div>
 
 
@@ -640,7 +644,7 @@
 </div>
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  <a class="theme-link" href="https://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
@@ -772,6 +776,27 @@
 
 
 
+
+     
+     
+     
+     
+     <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+     <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+     
+         <script type="text/javascript">
+             var gitment = new Gitment({
+                id: document.location.href, 
+                 owner: 'zhangMax',
+                 repo: 'zhangMax.github.io',
+                 oauth: {
+                     client_id: 'edd4dc8b687c8ee91294',
+                     client_secret: '9cfe2603d1e6d0d18579a0524d66ca359d7b5c5e',
+                 }});
+             gitment.render('gitment-container');
+         </script>
+     
+ 
 
   
 
