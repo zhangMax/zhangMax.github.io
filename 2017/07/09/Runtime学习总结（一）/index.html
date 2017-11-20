@@ -1,0 +1,1005 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Wonkey Zhang" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Runtime在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了Method Swizzling，AssociatedObject这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习runtime的知识点，看看它究竟‘‘黑’’在哪里。 概述我们都知道Objective-C是一门动态语言，可以在程序运行时创建，检查，修改类、对象和它们的方法，这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Runtime学习总结（一）">
+<meta property="og:url" content="http://wonkeyz.com/2017/07/09/Runtime学习总结（一）/index.html">
+<meta property="og:site_name" content="Wonkey Zhang">
+<meta property="og:description" content="Runtime在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了Method Swizzling，AssociatedObject这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习runtime的知识点，看看它究竟‘‘黑’’在哪里。 概述我们都知道Objective-C是一门动态语言，可以在程序运行时创建，检查，修改类、对象和它们的方法，这">
+<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/17-11-17/86473124.jpg">
+<meta property="og:updated_time" content="2017-11-20T08:44:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Runtime学习总结（一）">
+<meta name="twitter:description" content="Runtime在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了Method Swizzling，AssociatedObject这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习runtime的知识点，看看它究竟‘‘黑’’在哪里。 概述我们都知道Objective-C是一门动态语言，可以在程序运行时创建，检查，修改类、对象和它们的方法，这">
+<meta name="twitter:image" content="http://owgqmweju.bkt.clouddn.com/17-11-17/86473124.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wonkeyz.com/2017/07/09/Runtime学习总结（一）/"/>
+
+
+
+
+
+  <title> Runtime学习总结（一） | Wonkey Zhang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wonkey Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/09/Runtime学习总结（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Runtime学习总结（一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T11:00:35+08:00">
+                2017-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><code>Runtime</code>在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了<code>Method Swizzling</code>，<code>AssociatedObject</code>这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习<code>runtime</code>的知识点，看看它究竟‘‘黑’’在哪里。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>我们都知道Objective-C是一门动态语言，可以在程序运行时创建，检查，修改类、对象和它们的方法，这一切都归功于<code>runtime</code>，它是用C和汇编写的库，这个库使C具有了面向对象的能力。总结起来，<code>Runtime</code>库主要做了几件事:</p>
+<ul>
+<li>封装：用C的结构体表示OC的对象，用C的函数实现OC的方法，这些结构体和函数被<code>runtime</code>函数封装后，OC就具有了动态的特性。</li>
+<li>收发消息：在对象执行某个方法时，这个方法被<code>runtime</code>当做一条消息发送给接收者，也就是对象，<code>Runtime</code>会根据接收者能否响应该消息而做出不同的反应。  </li>
+</ul>
+<p>下面我们分别来看下平时再熟悉不过的类与对象、成员变量与属性的数据结构和操作函数。<br><a id="more"></a></p>
+<h2 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h4><p>通过<code>objc.h</code>与<code>runtime.h</code>我们可以看到<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 这里定义了一个指向objc_class结构体的指针Class，也就是OC中的类</span></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class *Class;</div><div class="line"><span class="comment">// 结构体定义如下</span></div><div class="line"><span class="keyword">struct</span> objc_class &#123;</div><div class="line">    Class isa  OBJC_ISA_AVAILABILITY;</div><div class="line">    </div><div class="line"><span class="meta">#if !__OBJC2__</span></div><div class="line">    Class super_class                   	OBJC2_UNAVAILABLE;	<span class="comment">// 父类</span></div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name                      	OBJC2_UNAVAILABLE;	<span class="comment">// 类名</span></div><div class="line">    <span class="keyword">long</span> version                          	OBJC2_UNAVAILABLE;	<span class="comment">// 类版本，默认为0</span></div><div class="line">    <span class="keyword">long</span> info                            	OBJC2_UNAVAILABLE;	<span class="comment">// 类信息，供运行时使用的一些位标识</span></div><div class="line">    <span class="keyword">long</span> instance_size                   	OBJC2_UNAVAILABLE;	<span class="comment">// 实例变量大小</span></div><div class="line">    <span class="keyword">struct</span> objc_ivar_list *ivars         	OBJC2_UNAVAILABLE;	<span class="comment">// 成员变量列表</span></div><div class="line">    <span class="keyword">struct</span> objc_method_list **methodLists 	OBJC2_UNAVAILABLE;	<span class="comment">// 方法列表</span></div><div class="line">    <span class="keyword">struct</span> objc_cache *cache              	OBJC2_UNAVAILABLE;	<span class="comment">// 方法缓存</span></div><div class="line">    <span class="keyword">struct</span> objc_protocol_list *protocols 	OBJC2_UNAVAILABLE;	<span class="comment">// 协议列表</span></div><div class="line"><span class="meta">#endif</span></div><div class="line">&#125; OBJC2_UNAVAILABLE;</div></pre></td></tr></table></figure></p>
+<p>我们先来看下这几个字段：</p>
+<ul>
+<li><code>isa</code>：我们知道OC中对象的<code>isa</code>指向类，同样类也有一个<code>isa</code>指针，它指向<code>meta Class</code>(元类)，这里类也是一个对象。</li>
+<li><code>super_class</code>：指向该类的父类，如果该类已经是<code>Root Class</code>(如<code>NSObject</code>或<code>NSProxy</code>)，则<code>super_class</code>为<code>NULL</code>。</li>
+<li><p><code>cache</code>：该字段用于缓存调用过的方法。<code>cache</code>指针指向<code>objc_cache</code>结构体，这个结构体的定义如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> objc_cache &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> mask <span class="comment">/* total = mask + 1 */</span> OBJC2_UNAVAILABLE; <span class="comment">// 指定分配缓存bucket的总数。runtime使用这个字段确定线性查找数组的索引位置</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> occupied OBJC2_UNAVAILABLE; <span class="comment">// 实际占用缓存bucket总数</span></div><div class="line">    Method buckets[<span class="number">1</span>] OBJC2_UNAVAILABLE; <span class="comment">// 指向Method数据结构指针的数组，这个数组的元素总数不能超过mask+1，如果为空则表示缓存bucket没有被占用，它有可能是不连续的，会随着时间而变大。</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>当我们调用一个方法时，这个方法就会被放到<code>cache</code>中，下次调用<code>runtime</code>就会优先去<code>cache</code>中查找，这样就避免了每次都直接去<code>methodLists</code>中查找，提高了效率。</p>
+</li>
+</ul>
+<h4 id="objc-object"><a href="#objc-object" class="headerlink" title="objc_object"></a>objc_object</h4><p>看完了<code>Class</code>我们再来看一下对象，参考<code>objc-private.h</code>部分源码：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> objc_object &#123;</div><div class="line">private:</div><div class="line">    isa_t isa;</div><div class="line"></div><div class="line">public:</div><div class="line">    <span class="comment">// ISA() assumes this is NOT a tagged pointer object</span></div><div class="line">    Class ISA();</div><div class="line"></div><div class="line">    <span class="comment">// getIsa() allows this to be a tagged pointer object</span></div><div class="line">    Class getIsa();</div><div class="line"></div><div class="line">    <span class="comment">// initIsa() should be used to init the isa of new objects only.</span></div><div class="line">    <span class="comment">// If this object already has an isa, use changeIsa() for correctness.</span></div><div class="line">    <span class="comment">// initInstanceIsa(): objects with no custom RR/AWZ</span></div><div class="line">    <span class="comment">// initClassIsa(): class objects</span></div><div class="line">    <span class="comment">// initProtocolIsa(): protocol objects</span></div><div class="line">    <span class="comment">// initIsa(): other objects</span></div><div class="line">    <span class="keyword">void</span> initIsa(Class cls <span class="comment">/*nonpointer=false*/</span>);</div><div class="line">    <span class="keyword">void</span> initClassIsa(Class cls <span class="comment">/*nonpointer=maybe*/</span>);</div><div class="line">    <span class="keyword">void</span> initProtocolIsa(Class cls <span class="comment">/*nonpointer=maybe*/</span>);</div><div class="line">    <span class="keyword">void</span> initInstanceIsa(Class cls, <span class="keyword">bool</span> hasCxxDtor);</div><div class="line">    <span class="comment">// 省略其他方法声明...</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_object *<span class="keyword">id</span>;</div></pre></td></tr></table></figure></p>
+<p><code>objc_object</code>结构体包含一个类型为<code>isa_t</code>的<code>isa</code>指针，这个指针就是我们所说的指向这个对象所属类的指针。publich里面定义了一些操作<code>isa</code>的方法。<code>Runtime</code>库会在该类的方法列表及父类的方法列表中去寻找与消息对应的<code>selector</code>，找到后即执行这个方法。<br>下面的<code>id</code>是一个<code>objc_object</code>结构体类型的指针，这个类型的对象能够转换成任意类型的对象，类似于C语言中void *指针的作用。<br>这里有一点要特殊说明，其实<code>isa</code>并不总是指向实例对象所属的类，在我们使用KVO时，会产生一个中间类，系统会通过<code>isa-swizzling</code>把<code>isa</code>指向这个类而不是真实的类，所以不能依靠它来确定类型，而应该用<code>class</code>方法来确定实例对象的类。详见<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="external">官方文档</a>。</p>
+<h4 id="Meta-Class"><a href="#Meta-Class" class="headerlink" title="Meta Class"></a>Meta Class</h4><p>上面我们说到类本身也是对象，那么他的<code>isa</code>指向谁呢？答案就是元类<code>Meta Class</code>。当我们向一个对象发送消息时，<code>runtime</code>会在这个对象所属类的方法列表中查找方法，而向一个类发送消息时，会在这个类的<code>Meta Class</code>的方法列表中查找。<br><code>Meta Class</code>存储着一个类的所有类方法，每个类都会有一个单独的<code>Meta Class</code>，因为每个类的类方法基本不可能完全相同。<br>那么问题来了，<code>Meta Class</code>的<code>isa</code>又指向谁呢？这么搞下去岂不是无穷无尽…为了避免这种尴尬的问题，Objective-C的设计者让所有<code>Meta Class</code>的<code>isa</code>都指向基类（Root Class）的<code>Meta Class</code>，即所有的类的<code>Meta Class</code>，包括Root Class，Superclass，Subclass的<code>isa</code>都指向Root class的<code>Meta Class</code>，而Root Class的<code>Meta Class</code>的<code>isa</code>指针又指向了它自己，这样就形成一个闭环。如图：<br><img src="http://owgqmweju.bkt.clouddn.com/17-11-17/86473124.jpg" alt="图1"><br>再来一个小demo来验证一下上图（取自<a href="http://blog.sunnyxx.com/2014/11/06/runtime-nuts/" target="_blank" rel="external">神经病院objc runtime入院考试</a>）<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Sark</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Sark</span></span></div><div class="line"><span class="keyword">@end</span></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line">     <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">          <span class="built_in">BOOL</span> res1 = [(<span class="keyword">id</span>)[<span class="built_in">NSObject</span> <span class="keyword">class</span>] isKindOfClass:[<span class="built_in">NSObject</span> <span class="keyword">class</span>]];</div><div class="line">          <span class="built_in">BOOL</span> res2 = [(<span class="keyword">id</span>)[<span class="built_in">NSObject</span> <span class="keyword">class</span>] isMemberOfClass:[<span class="built_in">NSObject</span> <span class="keyword">class</span>]];</div><div class="line">          <span class="built_in">BOOL</span> res3 = [(<span class="keyword">id</span>)[Sark <span class="keyword">class</span>] isKindOfClass:[Sark <span class="keyword">class</span>]];</div><div class="line">          <span class="built_in">BOOL</span> res4 = [(<span class="keyword">id</span>)[Sark <span class="keyword">class</span>] isMemberOfClass:[Sark <span class="keyword">class</span>]];</div><div class="line">          <span class="built_in">NSLog</span>(<span class="string">@"%d %d %d %d"</span>, res1, res2, res3, res4);</div><div class="line">     &#125;</div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 结果为1 0 0 0</span></div></pre></td></tr></table></figure></p>
+<p>先来看下<code>isKindOfClass:</code>,<code>isMemberOfClass:</code>在<code>Object.mm</code>中的实现：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">- (<span class="built_in">BOOL</span>)isKindOf:aClass &#123;</div><div class="line">     Class cls;</div><div class="line">     <span class="keyword">for</span> (cls = isa; cls; cls = cls-&gt;superclass)</div><div class="line">          <span class="keyword">if</span> (cls == (Class)aClass)</div><div class="line">               <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">     <span class="keyword">return</span> <span class="literal">NO</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">BOOL</span>)isMemberOf:aClass &#123;</div><div class="line">     <span class="keyword">return</span> isa == (Class)aClass;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们从头走一遍，res1第一次cls是NSObject的Meta Class，因为他是基类，所有第二次cls又指回了NSObject，返回YES；res2只走了一次返回NO；res3第一次cls是Sark的Meta Class，第二次cls是NSObject的Meta Class，第三次cls是NSObject，返回NO；res4显然返回NO。</p>
+<h3 id="操作函数"><a href="#操作函数" class="headerlink" title="操作函数"></a>操作函数</h3><h4 id="类操作函数"><a href="#类操作函数" class="headerlink" title="类操作函数"></a>类操作函数</h4><p>聊完类与对象的基本结构，我们来看下都可以对它们做哪些操作。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取类名</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * class_getName ( Class cls );</div><div class="line"></div><div class="line"><span class="comment">// 获取父类</span></div><div class="line">Class class_getSuperclass ( Class cls );</div><div class="line"><span class="comment">// 获取元类</span></div><div class="line">Class objc_getMetaClass( Class cls );</div><div class="line"><span class="comment">// 判断给定的Class是否是一个元类</span></div><div class="line"><span class="built_in">BOOL</span> class_isMetaClass ( Class cls );</div><div class="line"></div><div class="line"><span class="comment">// 获取版本号</span></div><div class="line"><span class="keyword">int</span> class_getVersion ( Class cls );</div><div class="line"><span class="comment">// 设置版本号</span></div><div class="line"><span class="keyword">void</span> class_setVersion ( Class cls, <span class="keyword">int</span> version );</div><div class="line"></div><div class="line"><span class="comment">// 获取实例大小</span></div><div class="line">size_t class_getInstanceSize ( Class cls );</div><div class="line"></div><div class="line"><span class="comment">// 成员变量操作函数</span></div><div class="line"><span class="comment">// 获取类中指定名称实例成员变量的信息</span></div><div class="line">Ivar class_getInstanceVariable ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line"><span class="comment">// 获取类成员变量的信息</span></div><div class="line">Ivar class_getClassVariable ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line"><span class="comment">// 添加成员变量</span></div><div class="line"><span class="built_in">BOOL</span> class_addIvar ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name, size_t size, uint8_t alignment, <span class="keyword">const</span> <span class="keyword">char</span> *types ); </div><div class="line"><span class="comment">// 获取整个成员变量列表</span></div><div class="line">Ivar * class_copyIvarList ( Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount );</div><div class="line"></div><div class="line"><span class="comment">// 属性操作函数</span></div><div class="line"><span class="comment">// 获取指定的属性</span></div><div class="line">objc_property_t class_getProperty ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line"><span class="comment">// 获取属性列表</span></div><div class="line">objc_property_t * class_copyPropertyList ( Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount );</div><div class="line"><span class="comment">// 添加属性</span></div><div class="line"><span class="built_in">BOOL</span> class_addProperty ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> objc_property_attribute_t *attributes, <span class="keyword">unsigned</span> <span class="keyword">int</span> attributeCount );</div><div class="line"><span class="comment">// 替换类的属性</span></div><div class="line"><span class="keyword">void</span> class_replaceProperty ( Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> objc_property_attribute_t *attributes, <span class="keyword">unsigned</span> <span class="keyword">int</span> attributeCount );</div><div class="line"></div><div class="line"><span class="comment">// 协议操作函数</span></div><div class="line"><span class="comment">// 添加协议</span></div><div class="line"><span class="built_in">BOOL</span> class_addProtocol ( Class cls, Protocol *protocol );</div><div class="line"><span class="comment">// 返回类是否实现指定的协议</span></div><div class="line"><span class="built_in">BOOL</span> class_conformsToProtocol ( Class cls, Protocol *protocol );</div><div class="line"><span class="comment">// 返回类实现的协议列表</span></div><div class="line">Protocol * class_copyProtocolList ( Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount );</div></pre></td></tr></table></figure></p>
+<p><code>Objective-C</code>不支持往已存在的类中添加成员，因此不管是系统库提供的类，还是我们自定义的类，都无法动态添加成员变量。所以<code>class_addIvar</code>只支持给运行时创建的非元类添加成员变量，还需要注意这个方法只能在<code>objc_allocateClassPair</code>函数与<code>objc_registerClassPair</code>之间调用。<br>类似于<code>class_copyIvarList</code>,<code>class_getClassVariable</code>的函数返回的数组在使用后需要使用free()手动释放，<code>outCount</code>指针返回数组的大小。<br><code>class_conformsToProtocol</code>相当于<code>conformsToProtocol:</code>方法。  </p>
+<h4 id="对象操作函数"><a href="#对象操作函数" class="headerlink" title="对象操作函数"></a>对象操作函数</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 返回指定对象的一份拷贝</span></div><div class="line"><span class="keyword">id</span> object_copy ( <span class="keyword">id</span> obj, size_t size );</div><div class="line"><span class="comment">// 释放指定对象占用的内存</span></div><div class="line"><span class="keyword">id</span> object_dispose ( <span class="keyword">id</span> obj );</div><div class="line"></div><div class="line"><span class="comment">// 修改对象实例变量的值</span></div><div class="line">Ivar object_setInstanceVariable ( <span class="keyword">id</span> obj, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">void</span> *value );</div><div class="line"><span class="comment">// 获取对象实例变量的值</span></div><div class="line">Ivar object_getInstanceVariable ( <span class="keyword">id</span> obj, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">void</span> **outValue );</div><div class="line"><span class="comment">// 返回指向给定对象分配的任何额外字节的指针</span></div><div class="line"><span class="keyword">void</span> * object_getIndexedIvars ( <span class="keyword">id</span> obj );</div><div class="line"><span class="comment">// 修改对象实例变量的值，如果Ivar已知，则调用该函数会比object_setInstanceVariable快，下面一样</span></div><div class="line"><span class="keyword">void</span> object_setIvar ( <span class="keyword">id</span> obj, Ivar ivar, <span class="keyword">id</span> value );</div><div class="line"><span class="comment">// 获取对象实例变量的值</span></div><div class="line"><span class="keyword">id</span> object_getIvar ( <span class="keyword">id</span> obj, Ivar ivar );</div><div class="line"></div><div class="line"><span class="comment">// 返回对象的类名</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * object_getClassName ( <span class="keyword">id</span> obj );</div><div class="line"><span class="comment">// 返回对象的类</span></div><div class="line">Class object_getClass ( <span class="keyword">id</span> obj );</div><div class="line"><span class="comment">// 设置对象的类</span></div><div class="line">Class object_setClass ( <span class="keyword">id</span> obj, Class cls );</div></pre></td></tr></table></figure>
+<p>举一个简单的例子，在运行时转换对象的类型：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSObject</span> *a = [[<span class="built_in">NSObject</span> alloc] init];</div><div class="line"><span class="keyword">id</span> newB = object_copy(a, class_getInstanceSize(MyClass.class));</div><div class="line">object_setClass(newB, MyClass.class);</div><div class="line">object_dispose(a);</div></pre></td></tr></table></figure></p>
+<h4 id="动态创建类和对象"><a href="#动态创建类和对象" class="headerlink" title="动态创建类和对象"></a>动态创建类和对象</h4><h5 id="动态创建类"><a href="#动态创建类" class="headerlink" title="动态创建类"></a>动态创建类</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建一个新类和元类</span></div><div class="line">Class objc_allocateClassPair ( Class superclass, <span class="keyword">const</span> <span class="keyword">char</span> *name, size_t extraBytes ); <span class="comment">// 如果创建的是root class，则superclass为Nil。extraBytes通常为0</span></div><div class="line"><span class="comment">// 销毁一个类及其相关联的类</span></div><div class="line"><span class="keyword">void</span> objc_disposeClassPair ( Class cls ); <span class="comment">// 如果程序中还存在该类或子类的实例，就不能够调用该方法。</span></div><div class="line"><span class="comment">// 在应用中注册由objc_allocateClassPair创建的类</span></div><div class="line"><span class="keyword">void</span> objc_registerClassPair ( Class cls ); <span class="comment">// 创建了新类后，使用class_addMethod，class_addIvar函数为新类添加方法，实例变量和属性后再调用这个来注册类。</span></div></pre></td></tr></table></figure>
+<p>代码示例：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">Class cls = objc_allocateClassPair(MyClass.class, <span class="string">"MySubClass"</span>, <span class="number">0</span>);</div><div class="line"></div><div class="line">class_addMethod(cls, <span class="keyword">@selector</span>(submethod1), (IMP)imp_submethod1, <span class="string">"v@:"</span>);</div><div class="line">class_replaceMethod(cls, <span class="keyword">@selector</span>(method1), (IMP)imp_submethod1, <span class="string">"v@:"</span>);</div><div class="line"></div><div class="line">class_addIvar(cls, <span class="string">"_ivar1"</span>, <span class="keyword">sizeof</span>(<span class="built_in">NSString</span> *), log(<span class="keyword">sizeof</span>(<span class="built_in">NSString</span> *)), <span class="string">"i"</span>);</div><div class="line"></div><div class="line">objc_property_attribute_t type = &#123;<span class="string">"T"</span>, <span class="string">"@\"NSString\""</span>&#125;;</div><div class="line">objc_property_attribute_t ownership = &#123; <span class="string">"C"</span>, <span class="string">""</span> &#125;;</div><div class="line">objc_property_attribute_t backingivar = &#123; <span class="string">"V"</span>, <span class="string">"_ivar1"</span>&#125;;</div><div class="line">objc_property_attribute_t attrs[] = &#123;type, ownership, backingivar&#125;;</div><div class="line">class_addProperty(cls, <span class="string">"property2"</span>, attrs, <span class="number">3</span>);</div><div class="line"></div><div class="line">objc_registerClassPair(cls);</div><div class="line"></div><div class="line"><span class="keyword">id</span> instance = [[cls alloc] init];</div><div class="line">[instance performSelector:<span class="keyword">@selector</span>(submethod1)];</div><div class="line">[instance performSelector:<span class="keyword">@selector</span>(method1)];</div><div class="line"></div><div class="line"><span class="comment">// 输出结果均为run sub method 1</span></div></pre></td></tr></table></figure></p>
+<h5 id="动态创建对象"><a href="#动态创建对象" class="headerlink" title="动态创建对象"></a>动态创建对象</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建类实例</span></div><div class="line"><span class="keyword">id</span> class_createInstance ( Class cls, size_t extraBytes );</div><div class="line"><span class="comment">// 在指定位置创建类实例</span></div><div class="line"><span class="keyword">id</span> objc_constructInstance ( Class cls, <span class="keyword">void</span> *bytes );</div><div class="line"><span class="comment">// 销毁类实例</span></div><div class="line"><span class="keyword">void</span> * objc_destructInstance ( <span class="keyword">id</span> obj ); <span class="comment">// 不会释放移除任何与该实例相关的引用</span></div></pre></td></tr></table></figure>
+<p><code>class_createInstance</code>：创建实例时，会在默认的内存区域为类分配内存，无法在ARC环境下使用。这里延伸一个知识点<a href="http://www.jianshu.com/p/bab5e34e5ff0" target="_blank" rel="external">深入理解alloc、init方法</a>，<code>class_createInstance</code>效果与<code>alloc</code>方法类似，我们来对比一下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">id</span> theObject = class_createInstance(<span class="built_in">NSString</span>.class, <span class="keyword">sizeof</span>(<span class="keyword">unsigned</span>));</div><div class="line"> </div><div class="line"><span class="keyword">id</span> str1 = [theObject init];</div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [str1 <span class="keyword">class</span>]);</div><div class="line"><span class="keyword">id</span> str2 = [[<span class="built_in">NSString</span> alloc] initWithString:<span class="string">@"test"</span>];</div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [str2 <span class="keyword">class</span>]);</div><div class="line"></div><div class="line"><span class="comment">// 输出结果为NSString,__NSCFConstantString</span></div></pre></td></tr></table></figure></p>
+<p>在使用<code>objc_destructInstance</code>函数时并不会释放并移除任何与其相关的引用。</p>
+<h4 id="获取类定义"><a href="#获取类定义" class="headerlink" title="获取类定义"></a>获取类定义</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取已注册的类定义的列表</span></div><div class="line"><span class="keyword">int</span> objc_getClassList ( Class *buffer, <span class="keyword">int</span> bufferCount );</div><div class="line"><span class="comment">// 创建并返回一个指向所有已注册类的指针列表</span></div><div class="line">Class * objc_copyClassList ( <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount );</div><div class="line"></div><div class="line"><span class="comment">// 返回指定类的类定义</span></div><div class="line">Class objc_lookUpClass ( <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line">Class objc_getClass ( <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line">Class objc_getRequiredClass ( <span class="keyword">const</span> <span class="keyword">char</span> *name );</div><div class="line"></div><div class="line"><span class="comment">// 返回指定类的元类</span></div><div class="line">Class objc_getMetaClass ( <span class="keyword">const</span> <span class="keyword">char</span> *name );</div></pre></td></tr></table></figure>
+<h2 id="成员变量与属性"><a href="#成员变量与属性" class="headerlink" title="成员变量与属性"></a>成员变量与属性</h2><h3 id="数据结构-1"><a href="#数据结构-1" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="Ivar"><a href="#Ivar" class="headerlink" title="Ivar"></a>Ivar</h4><p><code>Ivar</code>表示实例变量的类型，指向<code>objc_ivar</code>结构体的指针，<code>ivar</code>指针地址是根据<code>class</code>结构体的地址加上基地址偏移字节得到的。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_ivar *Ivar;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> objc_ivar &#123;</div><div class="line">    <span class="keyword">char</span> *ivar_name               	OBJC2_UNAVAILABLE;	<span class="comment">// 变量名</span></div><div class="line">    <span class="keyword">char</span> *ivar_type             	OBJC2_UNAVAILABLE;	<span class="comment">// 变量类型</span></div><div class="line">    <span class="keyword">int</span> ivar_offset            		OBJC2_UNAVAILABLE;	<span class="comment">// 基地址偏移字节</span></div><div class="line"><span class="meta">#ifdef __LP64__</span></div><div class="line">    <span class="keyword">int</span> space                 		OBJC2_UNAVAILABLE;</div><div class="line"><span class="meta">#endif</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="objc-property-t、objc-property-attribute-t"><a href="#objc-property-t、objc-property-attribute-t" class="headerlink" title="objc_property_t、objc_property_attribute_t"></a>objc_property_t、objc_property_attribute_t</h4><p><code>objc_property_t</code>：声明的属性的类型，是一个指向objc_property结构体的指针：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_property *objc_property_t;</div><div class="line">```  </div><div class="line">`objc_property_attribute_t`：定义了属性的特性的结构体：</div><div class="line">```objc</div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;           <span class="comment">// 属性特性名</span></div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *value;          <span class="comment">// 属性特性值</span></div><div class="line">&#125; objc_property_attribute_t;</div></pre></td></tr></table></figure></p>
+<p>列举一些常用的attribure：</p>
+<table>
+<thead>
+<tr>
+<th>attribure</th>
+<th>name</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nonatomic</td>
+<td>N</td>
+<td>空</td>
+</tr>
+<tr>
+<td>strong/retain</td>
+<td>&amp;</td>
+<td>空</td>
+</tr>
+<tr>
+<td>weak</td>
+<td>W</td>
+<td>空</td>
+</tr>
+<tr>
+<td>copy</td>
+<td>C</td>
+<td>空</td>
+</tr>
+<tr>
+<td>属性的类型type</td>
+<td>T</td>
+<td>@”TypeName”, 如 @”NSString”</td>
+</tr>
+<tr>
+<td>属性对应的实例变量Ivar</td>
+<td>V</td>
+<td>Ivar_name, 如 _name</td>
+</tr>
+<tr>
+<td>readonly</td>
+<td>R</td>
+<td>空</td>
+</tr>
+<tr>
+<td>getter</td>
+<td>G</td>
+<td>GetterName, 如 isHighlight</td>
+</tr>
+<tr>
+<td>setter</td>
+<td>S</td>
+<td>SetterName, 如 setName</td>
+</tr>
+<tr>
+<td>assign/atomic</td>
+<td>默认即为assign和atomic</td>
+<td>空</td>
+</tr>
+</tbody>
+</table>
+<h3 id="操作函数-1"><a href="#操作函数-1" class="headerlink" title="操作函数"></a>操作函数</h3><h4 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取成员变量名</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * ivar_getName ( Ivar v );</div><div class="line"><span class="comment">// 获取成员变量类型编码</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * ivar_getTypeEncoding ( Ivar v );</div><div class="line"><span class="comment">// 获取成员变量的偏移量</span></div><div class="line">ptrdiff_t ivar_getOffset ( Ivar v );</div></pre></td></tr></table></figure>
+<p>关于类型编码，感兴趣的可以看下官方文档<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100-SW1" target="_blank" rel="external">Type Encodings</a>、<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html#//apple_ref/doc/uid/TP40008048-CH101-SW6" target="_blank" rel="external">Property Type String</a>。</p>
+<h4 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h4><p>如果在开发中你准备给系统的类额外添加一个属性，你可能会想到使用继承来实现，但是只增加一个属性，就去继承一个类，未免太麻烦了。这个时候，runtime提供了一个解决方案：即关联对象(Associated Object)。函数如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 设置关联对象</span></div><div class="line"><span class="keyword">void</span> objc_setAssociatedObject ( <span class="keyword">id</span> object, <span class="keyword">const</span> <span class="keyword">void</span> *key, <span class="keyword">id</span> value, objc_AssociationPolicy policy );</div><div class="line"><span class="comment">// 获取关联对象</span></div><div class="line"><span class="keyword">id</span> objc_getAssociatedObject ( <span class="keyword">id</span> object, <span class="keyword">const</span> <span class="keyword">void</span> *key );</div><div class="line"><span class="comment">// 移除关联对象</span></div><div class="line"><span class="keyword">void</span> objc_removeAssociatedObjects ( <span class="keyword">id</span> object );</div></pre></td></tr></table></figure></p>
+<p>其中参数含义为：<br>1.<code>id object</code>给谁添加关联对象。<br>2.<code>const void *key</code>关联对象唯一的key，获取时会用到。<br>3.<code>id value</code>关联对象。<br>4.<code>objc_AssociationPolicy</code>关联策略，有以下几种策略：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">enum</span> &#123;</div><div class="line">    OBJC_ASSOCIATION_ASSIGN = <span class="number">0</span>,</div><div class="line">    OBJC_ASSOCIATION_RETAIN_NONATOMIC = <span class="number">1</span>, </div><div class="line">    OBJC_ASSOCIATION_COPY_NONATOMIC = <span class="number">3</span>,</div><div class="line">    OBJC_ASSOCIATION_RETAIN = <span class="number">01401</span>,</div><div class="line">    OBJC_ASSOCIATION_COPY = <span class="number">01403</span> </div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>根据要关联对象的类型来选择关联策略。有了上面三个函数，我们就可以给分类添加/移除关联对象了，简单代码实例如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//添加关联对象（可以用方法地址作为key）</span></div><div class="line">- (<span class="keyword">void</span>)addAssociatedObject:(<span class="keyword">id</span>)object&#123;</div><div class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(getAssociatedObject), object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">&#125;</div><div class="line"><span class="comment">//获取关联对象（_cmd代表当前调用方法的地址）</span></div><div class="line">- (<span class="keyword">id</span>)getAssociatedObject&#123;</div><div class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, _cmd);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取属性名</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * property_getName ( objc_property_t property );</div><div class="line"><span class="comment">// 获取属性特性描述字符串</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> * property_getAttributes ( objc_property_t property );</div><div class="line"><span class="comment">// 获取属性中指定的特性</span></div><div class="line"><span class="keyword">char</span> * property_copyAttributeValue ( objc_property_t property, <span class="keyword">const</span> <span class="keyword">char</span> *attributeName );</div><div class="line"><span class="comment">// 获取属性的特性列表</span></div><div class="line">objc_property_attribute_t * property_copyAttributeList ( objc_property_t property, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount );</div></pre></td></tr></table></figure>
+<p>实例如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> outCount = <span class="number">0</span>;</div><div class="line">objc_property_t * properties = class_copyPropertyList([Model <span class="keyword">class</span>], &amp;outCount);</div><div class="line"><span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; outCount; i ++) &#123;</div><div class="line">    objc_property_t property = properties[i];</div><div class="line">    <span class="comment">//属性名</span></div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name = property_getName(property);</div><div class="line">    <span class="comment">//属性描述</span></div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * propertyAttr = property_getAttributes(property);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"属性 %s 的描述为 %s"</span>, name, propertyAttr);</div><div class="line"></div><div class="line">    <span class="comment">//属性的特性</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> attrCount = <span class="number">0</span>;</div><div class="line">    objc_property_attribute_t * attrs = property_copyAttributeList(property, &amp;attrCount);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> j = <span class="number">0</span>; j &lt; attrCount; j ++) &#123;</div><div class="line">        objc_property_attribute_t attr = attrs[j];</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> * name = attr.name;</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> * value = attr.value;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"属性特性名称：%s 值：%s"</span>, name, value);</div><div class="line">    &#125;</div><div class="line">    free(attrs);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"\n"</span>);</div><div class="line">&#125;</div><div class="line">free(properties);</div></pre></td></tr></table></figure></p>
+<p>输出结果为：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 可以结合上表理解</span></div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性 str 的描述为 T<span class="string">@"NSString"</span>,C,N,V_str</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：T 值：<span class="string">@"NSString"</span></div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：C 值：</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：N 值：</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：V 值：_str</div><div class="line"></div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性 array 的描述为 T<span class="string">@"NSArray"</span>,R,N,V_array</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：T 值：<span class="string">@"NSArray"</span></div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：R 值：</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：N 值：</div><div class="line">[<span class="number">24076</span>:<span class="number">1005550</span>] 属性特性名称：V 值：_array</div></pre></td></tr></table></figure></p>
+<p>通过上面的简单总结，我对Objective-C类与对象的底层实现有了更深的理解，同时也感受到了<code>runtime</code>的强大。下篇文章我会总结一下方法、消息的结构与操作函数，敬请期待~</p>
+<p>参考链接：<br><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html" target="_blank" rel="external">Objective-C Runtime官方文档</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008048" target="_blank" rel="external">Objective-C Runtime Programming Guide</a><br><a href="http://southpeak.github.io/categories/objectivec/" target="_blank" rel="external">南大runtime总结</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/29/iOS性能优化UI篇（二）/" rel="next" title="iOS性能优化UI篇（二）">
+                <i class="fa fa-chevron-left"></i> iOS性能优化UI篇（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/28/在对象dealloc时做一些操作/" rel="prev" title="在对象dealloc时做一些操作">
+                在对象dealloc时做一些操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+       
+         <div id="gitment-container"></div>
+       
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Wonkey Zhang" />
+          <p class="site-author-name" itemprop="name">Wonkey Zhang</p>
+           
+              <p class="site-description motion-element" itemprop="description">没人能在我的bgm里打败我🤓</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangMax" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/u/14e035556f07" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-heart"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/2804106015/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类与对象"><span class="nav-number">2.</span> <span class="nav-text">类与对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">2.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Class"><span class="nav-number">2.1.1.</span> <span class="nav-text">Class</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#objc-object"><span class="nav-number">2.1.2.</span> <span class="nav-text">objc_object</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Meta-Class"><span class="nav-number">2.1.3.</span> <span class="nav-text">Meta Class</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作函数"><span class="nav-number">2.2.</span> <span class="nav-text">操作函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类操作函数"><span class="nav-number">2.2.1.</span> <span class="nav-text">类操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象操作函数"><span class="nav-number">2.2.2.</span> <span class="nav-text">对象操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态创建类和对象"><span class="nav-number">2.2.3.</span> <span class="nav-text">动态创建类和对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#动态创建类"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">动态创建类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#动态创建对象"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">动态创建对象</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取类定义"><span class="nav-number">2.2.4.</span> <span class="nav-text">获取类定义</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#成员变量与属性"><span class="nav-number">3.</span> <span class="nav-text">成员变量与属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构-1"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Ivar"><span class="nav-number">3.1.1.</span> <span class="nav-text">Ivar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#objc-property-t、objc-property-attribute-t"><span class="nav-number">3.1.2.</span> <span class="nav-text">objc_property_t、objc_property_attribute_t</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作函数-1"><span class="nav-number">3.2.</span> <span class="nav-text">操作函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#成员变量"><span class="nav-number">3.2.1.</span> <span class="nav-text">成员变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关联对象"><span class="nav-number">3.2.2.</span> <span class="nav-text">关联对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#属性"><span class="nav-number">3.2.3.</span> <span class="nav-text">属性</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-hand-o-right"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wonkey Zhang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+     
+     
+     
+     
+     <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+     <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+     
+         <script type="text/javascript">
+             var gitment = new Gitment({
+                id: document.location.href, 
+                 owner: 'zhangMax',
+                 repo: 'zhangMax.github.io',
+                 oauth: {
+                     client_id: 'edd4dc8b687c8ee91294',
+                     client_secret: '9cfe2603d1e6d0d18579a0524d66ca359d7b5c5e',
+                 }});
+             gitment.render('gitment-container');
+         </script>
+     
+ 
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
