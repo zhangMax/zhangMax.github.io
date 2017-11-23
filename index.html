@@ -279,7 +279,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/09/17/适配iOS11-iPhoneX的一些坑/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/09/17/Some-pits-for-iOS11-iPhoneX-adaptation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -301,7 +301,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/09/17/适配iOS11-iPhoneX的一些坑/" itemprop="url">
+                <a class="post-title-link" href="/2017/09/17/Some-pits-for-iOS11-iPhoneX-adaptation/" itemprop="url">
                   适配iOS11&iPhoneX的一些坑
                 </a>
               
@@ -358,7 +358,7 @@
           <p>前阵子项目开发忙成狗，就一直没做iOS11的适配，直到XcodeGM版发布后，我胸有成竹的在iPhoneX上跑起项目，整个人都凉透了…下面总结一下我遇到的坑，不是很全面，日后补充。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/09/17/适配iOS11-iPhoneX的一些坑/#more" rel="contents">
+            <a class="btn" href="/2017/09/17/Some-pits-for-iOS11-iPhoneX-adaptation/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -404,7 +404,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/28/在对象dealloc时做一些操作/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -426,7 +426,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/07/28/在对象dealloc时做一些操作/" itemprop="url">
+                <a class="post-title-link" href="/2017/07/28/Do-some-operation-with -object-dealloc/" itemprop="url">
                   在对象dealloc时做一些操作
                 </a>
               
@@ -483,7 +483,7 @@
           <p>最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的<code>dealloc</code>方法里调用该block，简单粗暴…
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/07/28/在对象dealloc时做一些操作/#more" rel="contents">
+            <a class="btn" href="/2017/07/28/Do-some-operation-with -object-dealloc/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -529,7 +529,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/09/Runtime学习总结（一）/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/15/Runtime-Learning-summary-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -551,7 +551,133 @@
             
               
                 
-                <a class="post-title-link" href="/2017/07/09/Runtime学习总结（一）/" itemprop="url">
+                <a class="post-title-link" href="/2017/07/15/Runtime-Learning-summary-2/" itemprop="url">
+                  Runtime学习总结（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-15T16:59:05+08:00">
+                2017-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>书接上回，我们来说一下<code>runtime</code>最有趣的部分，方法和消息转发机制（希望我能写的有趣😂）。</p>
+<h2 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h2><p>顾名思义我们常说的方法就是<code>Method</code>，它的定义如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> method_t *Method;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> method_t &#123;</div><div class="line">    SEL name;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *types;  <span class="comment">//用来存储着方法的参数类型和返回值类型</span></div><div class="line">    IMP imp;</div><div class="line"></div><div class="line">    <span class="keyword">struct</span> SortBySELAddress :</div><div class="line">        public std::binary_function&lt;<span class="keyword">const</span> method_t&amp;,</div><div class="line">                                    <span class="keyword">const</span> method_t&amp;, <span class="keyword">bool</span>&gt;</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">bool</span> operator() (<span class="keyword">const</span> method_t&amp; lhs,</div><div class="line">                         <span class="keyword">const</span> method_t&amp; rhs)</div><div class="line">        &#123; <span class="keyword">return</span> lhs.name &lt; rhs.name; &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/07/15/Runtime-Learning-summary-2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/09/Runtime-Learning-summary-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/07/09/Runtime-Learning-summary-1/" itemprop="url">
                   Runtime学习总结（一）
                 </a>
               
@@ -608,7 +734,7 @@
           <p><code>Runtime</code>在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了<code>Method Swizzling</code>，<code>AssociatedObject</code>这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习<code>runtime</code>的知识点，看看它究竟‘‘黑’’在哪里。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/07/09/Runtime学习总结（一）/#more" rel="contents">
+            <a class="btn" href="/2017/07/09/Runtime-Learning-summary-1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -654,7 +780,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/29/iOS性能优化UI篇（二）/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/29/iOS-Performance optimization-UI-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -676,7 +802,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/06/29/iOS性能优化UI篇（二）/" itemprop="url">
+                <a class="post-title-link" href="/2017/06/29/iOS-Performance optimization-UI-2/" itemprop="url">
                   iOS性能优化UI篇（二）
                 </a>
               
@@ -736,7 +862,7 @@
 <li>尽量避免动态高度的cell，如果已确定控件的高度，直接使用<code>tableView</code>的<code>rowHeight</code>、<code>sectionHeaderHeight</code>和<code>sectionFooterHeight</code>设置高度，避免请求delegate。在<code>heightForRowAtIndexPath:</code>中尽量不使用<code>cellForRowAtIndexPath:</code>，如果你需要用到它，最好只用一次然后缓存结果。
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/29/iOS性能优化UI篇（二）/#more" rel="contents">
+            <a class="btn" href="/2017/06/29/iOS-Performance optimization-UI-2/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -782,7 +908,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/24/iOS性能优化UI篇（一）/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/24/iOS-Performance optimization-UI-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -804,7 +930,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/06/24/iOS性能优化UI篇（一）/" itemprop="url">
+                <a class="post-title-link" href="/2017/06/24/iOS-Performance optimization-UI-1/" itemprop="url">
                   iOS性能优化UI篇（一）
                 </a>
               
@@ -861,7 +987,7 @@
           <p> 这是一个老生常谈的话题，程序猿的一生除了在编译、写bug、改bug，就是在不断地重构优化，优化的点也多种多样，其中最直观有效的就是UI部分的优化了，这方面有很多相关资料，也有如<a href="https://github.com/ibireme/YYKit" target="_blank" rel="external">YYkit</a>、<a href="https://github.com/TextureGroup/Texture" target="_blank" rel="external">Texture</a>这种神级框架从根源上解决了卡顿的问题。作为菜鸟的我无法像大佬们一样从根源上分析解决UI性能问题，只能写一篇比较基础的文章，总结一下常用的控件的使用注意点，希望对你的日常开发有帮助~<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/iOS性能优化UI篇（一）/#more" rel="contents">
+            <a class="btn" href="/2017/06/24/iOS-Performance optimization-UI-1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -907,7 +1033,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/20/仿Facebook点赞动画/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/06/20/Imitation-Facebook-point-like-animation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -929,7 +1055,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/06/20/仿Facebook点赞动画/" itemprop="url">
+                <a class="post-title-link" href="/2017/06/20/Imitation-Facebook-point-like-animation/" itemprop="url">
                   仿Facebook点赞动画
                 </a>
               
@@ -983,10 +1109,10 @@
 
       
         
-          <p>一个简单的点赞动画，网上有很多实现方式，但觉得不对路，于是自己动起手来写了一个，效果如图：<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-16/8652901.jpg" alt="图1"></p>
+          <p>先写一个简单的动画练练手，效果如图：<br><img src="http://owgqmweju.bkt.clouddn.com/17-10-16/8652901.jpg" alt="图1"><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/20/仿Facebook点赞动画/#more" rel="contents">
+            <a class="btn" href="/2017/06/20/Imitation-Facebook-point-like-animation/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1189,7 +1315,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1202,7 +1328,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
