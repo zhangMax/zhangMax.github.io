@@ -1,0 +1,918 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="小程序," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Wonkey Zhang" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="有一天产品经理说咱们搞个小程序吧，程序猿：哦🙃 幸好安卓的同事提前入了坑，在他的技术分享后，我也随之入了坑。 开始我以为小程序的实现是类似React-native的，通过了解才知道在iOS上是通过WKWebView将Html+CSS呈现给用户，页面间的切换和跳转是基于原生的UITabBarController和UINavigationController，这种`native+webvi">
+<meta name="keywords" content="小程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="入坑小程序">
+<meta property="og:url" content="http://wonkeyz.com/2017/10/15/wxapp/index.html">
+<meta property="og:site_name" content="Wonkey Zhang">
+<meta property="og:description" content="有一天产品经理说咱们搞个小程序吧，程序猿：哦🙃 幸好安卓的同事提前入了坑，在他的技术分享后，我也随之入了坑。 开始我以为小程序的实现是类似React-native的，通过了解才知道在iOS上是通过WKWebView将Html+CSS呈现给用户，页面间的切换和跳转是基于原生的UITabBarController和UINavigationController，这种`native+webvi">
+<meta property="og:updated_time" content="2017-12-21T10:10:15.264Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="入坑小程序">
+<meta name="twitter:description" content="有一天产品经理说咱们搞个小程序吧，程序猿：哦🙃 幸好安卓的同事提前入了坑，在他的技术分享后，我也随之入了坑。 开始我以为小程序的实现是类似React-native的，通过了解才知道在iOS上是通过WKWebView将Html+CSS呈现给用户，页面间的切换和跳转是基于原生的UITabBarController和UINavigationController，这种`native+webvi">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wonkeyz.com/2017/10/15/wxapp/"/>
+
+
+
+
+
+  <title> 入坑小程序 | Wonkey Zhang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Wonkey Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/10/15/wxapp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                入坑小程序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T22:23:51+08:00">
+                2017-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>有一天产品经理说咱们搞个小程序吧，程序猿：哦🙃</p>
+<p>幸好安卓的同事提前入了坑，在他的技术分享后，我也随之入了坑。</p>
+<p>开始我以为小程序的实现是类似React-native的，通过了解才知道在iOS上是通过<code>WKWebView</code>将<code>Html+CSS</code>呈现给用户，页面间的切换和跳转是基于原生的<code>UITabBarController</code>和<code>UINavigationController</code>，这种`native+webview的实现造就了小程序易上手、体验好的优点。<br><a id="more"></a></p>
+<h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><p>首先要有一定的前端基础（我不会告诉你我是临时抱佛脚的…），其次就是看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html" target="_blank" rel="external">官方文档</a>和<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/demo.html?t=2017112" target="_blank" rel="external">演示demo</a>，里面写的很详细，走一遍下来再写几个demo，基本就能着手开发了，就是这么易上手。遇到问题可以去<a href="http://developers.weixin.qq.com/home?tab=1&amp;labels=&amp;lang=zh_CN&amp;token=" target="_blank" rel="external">官方社区</a>提问。</p>
+<h2 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h2><p>简单举几个示例</p>
+<h3 id="通过请求加载列表"><a href="#通过请求加载列表" class="headerlink" title="通过请求加载列表"></a>通过请求加载列表</h3><p>想要显示类似UITabView的列表必须在view组件上用<code>wx:for</code>来绑定一个数组然后渲染。在.js文件中定义一个数组items<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  <span class="attr">data</span>: &#123;</div><div class="line">    <span class="attr">items</span>:[],</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>在.js文件中请求接口获取数据并赋值给items<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  <span class="attr">data</span>: &#123;</div><div class="line">    <span class="attr">items</span>:[],</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">onLoad</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">    wx.request(&#123;</div><div class="line">      <span class="attr">url</span>: Url,</div><div class="line">      <span class="attr">method</span>: <span class="string">'GET'</span>,</div><div class="line">      <span class="attr">success</span>: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>)</span>&#123;</div><div class="line">        that.setData(&#123;</div><div class="line">          <span class="attr">items</span>: res.data.result,</div><div class="line">        &#125;)</div><div class="line">      &#125;,</div><div class="line">    &#125;)</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>准备好数据后，就可以刷新界面了，在.wxml中：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">view</span> <span class="attr">class</span>=<span class="string">"contain"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">view</span> <span class="attr">wx:for</span>=<span class="string">"&#123;&#123;items&#125;&#125;"</span> <span class="attr">wx:key</span>=<span class="string">"&#123;&#123;item.id&#125;&#125;"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;item.text&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;index&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">view</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>这里的<code>&lt;view wx:for=&quot;&quot;&gt;</code>相当于cell，item 是默认数组元素，index是默认是索引，默认值是可以修改的，具体可以参考官方文档列表渲染。</p>
+<p><code>wx:key</code>是用于标识view的唯一性的，可以提高列表的渲染性能。当数据改变触发渲染层重新渲染的时候，会校正带有key的组件，框架会确保他们被重新排序，而不是重新创建，以确保使组件保持自身的状态，并且提高列表渲染时的效率。</p>
+<h3 id="添加点击事件"><a href="#添加点击事件" class="headerlink" title="添加点击事件"></a>添加点击事件</h3><p>通过<code>bintap</code>给view绑定点击事件：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">view</span> <span class="attr">class</span>=<span class="string">"contain"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">view</span> <span class="attr">wx:for</span>=<span class="string">"&#123;&#123;items&#125;&#125;"</span> <span class="attr">wx:key</span>=<span class="string">"&#123;&#123;item.id&#125;&#125;"</span> <span class="attr">bindtap</span>=<span class="string">"cellAction"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;item.text&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;index&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">view</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>然后在.js实现相应的方法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  cellAction()&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'action'</span>)</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h3 id="页面跳转、传参"><a href="#页面跳转、传参" class="headerlink" title="页面跳转、传参"></a>页面跳转、传参</h3><p>想要点击跳转某一界面，需要现在<code>app.json</code>文件在中配置，在点击方法里调用<code>navigateTo</code>方法即可：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  cellAction()&#123;</div><div class="line">    wx.navigateTo(&#123;</div><div class="line">      <span class="attr">url</span>: <span class="string">'./detail'</span>,</div><div class="line">    &#125;)</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>如果想传参可以通过以下三种的方式：</p>
+<h4 id="全局变量："><a href="#全局变量：" class="headerlink" title="全局变量："></a>全局变量：</h4><p>首先必须在<code>app.js</code>定义一个全局的变量，比如：globalData，然后定义一个parameter属性用于储存参数，通过<code>var app = getApp()</code>拿到app实例去获取数据：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">App(&#123;</div><div class="line">  <span class="attr">onLaunch</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line"></div><div class="line">  &#125;,</div><div class="line">  <span class="attr">globalData</span>:&#123;</div><div class="line">    <span class="attr">parameter</span>:<span class="literal">null</span></div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>参数赋值：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = getApp()</div><div class="line"></div><div class="line">Page(&#123;</div><div class="line">  cellAction(object)&#123;</div><div class="line">    <span class="keyword">var</span> id = <span class="keyword">this</span>.data.items[<span class="number">0</span>].id;</div><div class="line">    <span class="keyword">var</span> text = <span class="keyword">this</span>.data.items[<span class="number">0</span>].text;</div><div class="line">    app.globalData.parameter = &#123;</div><div class="line">      <span class="string">"id"</span> : id,</div><div class="line">      <span class="string">"text"</span> : text</div><div class="line">    &#125;</div><div class="line">    wx.navigateTo(&#123;</div><div class="line">      <span class="attr">url</span>: <span class="string">'./detail'</span>,</div><div class="line">    &#125;)</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>获取参数：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// detail.js</span></div><div class="line"><span class="keyword">var</span> app = getApp()</div><div class="line">Page(&#123;</div><div class="line">  <span class="attr">onLoad</span>:<span class="function"><span class="keyword">function</span>(<span class="params">options</span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> id = app.globalData.parameter.id;</div><div class="line">    <span class="keyword">var</span> text = app.globalData.parameter.text;</div><div class="line">    <span class="built_in">console</span>.log(id);</div><div class="line">    <span class="built_in">console</span>.log(text);</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h4 id="路由："><a href="#路由：" class="headerlink" title="路由："></a>路由：</h4><p>就像iOS路由一样，参数通过链接传递：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  cellAction(object)&#123;</div><div class="line">    <span class="keyword">var</span> id = <span class="keyword">this</span>.data.items[<span class="number">0</span>].id;</div><div class="line">    <span class="keyword">var</span> text = <span class="keyword">this</span>.data.items[<span class="number">0</span>].text;</div><div class="line">    <span class="built_in">console</span>.log(id);</div><div class="line">    wx.navigateTo(&#123;</div><div class="line">      <span class="attr">url</span>: <span class="string">'./detail?id='</span> + id + <span class="string">'&amp;text='</span> + text,</div><div class="line">    &#125;)</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>到下一界面在<code>onLoad</code>函数中通过<code>options</code>获取：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// detail.js</span></div><div class="line">Page(&#123;</div><div class="line">  <span class="attr">onLoad</span>:<span class="function"><span class="keyword">function</span>(<span class="params">options</span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> id = options.id;</div><div class="line">    <span class="keyword">var</span> text = options.text;</div><div class="line">    <span class="built_in">console</span>.log(id);</div><div class="line">    <span class="built_in">console</span>.log(text);</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h4 id="本地缓存："><a href="#本地缓存：" class="headerlink" title="本地缓存："></a>本地缓存：</h4><p>通过<code>wx.setStorageSync</code>和<code>wx.getStorageSync</code>存取数据：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">cellAction(object)&#123;</div><div class="line">    <span class="keyword">var</span> id = <span class="keyword">this</span>.data.items[<span class="number">0</span>].id;</div><div class="line">    <span class="keyword">var</span> text = <span class="keyword">this</span>.data.items[<span class="number">0</span>].text;</div><div class="line">    wx.setStorageSync(<span class="string">"id"</span>,id);</div><div class="line">    wx.setStorageSync(<span class="string">"text"</span>,text);</div><div class="line">    wx.navigateTo(&#123;</div><div class="line">      <span class="attr">url</span>: <span class="string">'./detail'</span>,</div><div class="line">    &#125;)</div><div class="line">&#125;,</div></pre></td></tr></table></figure></p>
+<p>获取数据：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// detail.js</span></div><div class="line"><span class="keyword">var</span> app = getApp()</div><div class="line">Page(&#123;</div><div class="line">  <span class="attr">onLoad</span>:<span class="function"><span class="keyword">function</span>(<span class="params">options</span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> id = wx.getStorageSync(<span class="string">"id"</span>);</div><div class="line">    <span class="keyword">var</span> text = wx.getStorageSync(<span class="string">"text"</span>);</div><div class="line">    <span class="built_in">console</span>.log(id);</div><div class="line">    <span class="built_in">console</span>.log(text);</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>如果想传递index对应数据需要用到<code>dataset</code>：在组件中可以定义数据，这些数据将会通过事件传递给<code>SERVICE</code>。 书写方式：以data-开头，多个单词由连字符-链接，不能有大写(大写会自动转成小写)如data-element-type，最终在 <code>event.target.dataset</code>中会将连字符转成驼峰elementType。</p>
+<p>我们给之前的例子定义一个参数：<code>data-index=&quot;&quot;</code>：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">view</span> <span class="attr">class</span>=<span class="string">"contain"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">view</span> <span class="attr">wx:for</span>=<span class="string">"&#123;&#123;items&#125;&#125;"</span> <span class="attr">wx:key</span>=<span class="string">"&#123;&#123;item.id&#125;&#125;"</span> <span class="attr">bindtap</span>=<span class="string">"cellAction"</span> <span class="attr">data-index</span>=<span class="string">"&#123;&#123;index&#125;&#125;"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;item.text&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">text</span>&gt;</span>&#123;&#123;index&#125;&#125;<span class="tag">&lt;/<span class="name">text</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">view</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>通过<code>object.currentTarget.dataset</code>获取参数：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  cellAction(object)&#123;</div><div class="line">    <span class="keyword">var</span> index = object.currentTarget.dataset.index;</div><div class="line">    <span class="keyword">var</span> id = <span class="keyword">this</span>.data.items[index].id;</div><div class="line">    <span class="keyword">var</span> text = <span class="keyword">this</span>.data.items[index].text;</div><div class="line">    wx.navigateTo(&#123;</div><div class="line">      <span class="attr">url</span>: <span class="string">'./detail?id='</span> + id + <span class="string">'&amp;text='</span> + text,</div><div class="line">    &#125;)</div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h3 id="动态改变样式"><a href="#动态改变样式" class="headerlink" title="动态改变样式"></a>动态改变样式</h3><p>可以通过<code>sytle</code>来接收动态样式。比如点击之后改变字体颜色：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Page(&#123;</div><div class="line">  <span class="attr">data</span>: &#123;</div><div class="line">    <span class="comment">// 定义一个字体颜色的变量</span></div><div class="line">    textColor: <span class="string">"red"</span></div><div class="line">  &#125;,</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>将动态变量赋值给标签：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">text</span> <span class="attr">bindtap</span>=<span class="string">"change"</span> <span class="attr">style</span>=<span class="string">"color: &#123;&#123;textColor&#125;&#125;"</span>&gt;</span> text <span class="tag">&lt;/<span class="name">text</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>点击执行change方法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">change()&#123;</div><div class="line">    <span class="keyword">var</span> color = <span class="string">"green"</span></div><div class="line">    <span class="keyword">this</span>.setData(&#123;</div><div class="line">      <span class="attr">textColor</span> : color</div><div class="line">    &#125;)</div><div class="line">&#125;,</div></pre></td></tr></table></figure></p>
+<p>先总结到这里，后续我会总结一些开发中遇到的坑，希望别太多😂</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/小程序/" rel="tag"><i class="fa fa-tag"></i> 小程序</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/17/Some-pits-for-iOS11-iPhoneX-adaptation/" rel="next" title="适配iOS11&iPhoneX的一些坑">
+                <i class="fa fa-chevron-left"></i> 适配iOS11&iPhoneX的一些坑
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+       
+         <div id="gitment-container"></div>
+       
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="Wonkey Zhang" />
+          <p class="site-author-name" itemprop="name">Wonkey Zhang</p>
+           
+              <p class="site-description motion-element" itemprop="description">没人能在我的bgm里打败我🤓</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangMax" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/2804106015/profile?topnav=1&wvr=6" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#入门"><span class="nav-number">1.</span> <span class="nav-text">入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单示例"><span class="nav-number">2.</span> <span class="nav-text">简单示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通过请求加载列表"><span class="nav-number">2.1.</span> <span class="nav-text">通过请求加载列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加点击事件"><span class="nav-number">2.2.</span> <span class="nav-text">添加点击事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#页面跳转、传参"><span class="nav-number">2.3.</span> <span class="nav-text">页面跳转、传参</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局变量："><span class="nav-number">2.3.1.</span> <span class="nav-text">全局变量：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由："><span class="nav-number">2.3.2.</span> <span class="nav-text">路由：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地缓存："><span class="nav-number">2.3.3.</span> <span class="nav-text">本地缓存：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态改变样式"><span class="nav-number">2.4.</span> <span class="nav-text">动态改变样式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-hand-o-right"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wonkey Zhang</span>
+</div>
+
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+     
+     
+     
+     
+     <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+     <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+     
+         <script type="text/javascript">
+             var gitment = new Gitment({
+                id: document.location.href, 
+                 owner: 'zhangMax',
+                 repo: 'zhangMax.github.io',
+                 oauth: {
+                     client_id: 'edd4dc8b687c8ee91294',
+                     client_secret: '9cfe2603d1e6d0d18579a0524d66ca359d7b5c5e',
+                 }});
+             gitment.render('gitment-container');
+         </script>
+     
+ 
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
