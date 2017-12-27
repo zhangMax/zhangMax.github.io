@@ -64,7 +64,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="runitme," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -82,17 +82,15 @@
 
 
 
-<meta name="description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
-<meta name="keywords" content="runitme">
-<meta property="og:type" content="article">
-<meta property="og:title" content="在对象dealloc时做一些操作">
-<meta property="og:url" content="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/index.html">
+<meta name="description" content="没人能在我的bgm里打败我🤓">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Wonkey Zhang">
+<meta property="og:url" content="http://wonkeyz.com/tags/ReactiveCocoa/index.html">
 <meta property="og:site_name" content="Wonkey Zhang">
-<meta property="og:description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
-<meta property="og:updated_time" content="2017-10-19T07:14:06.505Z">
+<meta property="og:description" content="没人能在我的bgm里打败我🤓">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在对象dealloc时做一些操作">
-<meta name="twitter:description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
+<meta name="twitter:title" content="Wonkey Zhang">
+<meta name="twitter:description" content="没人能在我的bgm里打败我🤓">
 
 
 
@@ -120,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/"/>
+  <link rel="canonical" href="http://wonkeyz.com/tags/ReactiveCocoa/"/>
 
 
 
 
 
-  <title> 在对象dealloc时做一些操作 | Wonkey Zhang </title>
+  <title> 标签: ReactiveCocoa | Wonkey Zhang </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -151,7 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -269,163 +267,46 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Wonkey Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wonkey Zhang">
-    </span>
+  <div id="posts" class="posts-collapse">
+    <div class="collection-title">
+      <h2 >
+        ReactiveCocoa
+        <small>标签</small>
+      </h2>
+    </div>
 
     
-      <header class="post-header">
+      
 
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
+            <a class="post-title-link" href="/2017/08/20/ReactiveCocoa-common-method/" itemprop="url">
               
-                在对象dealloc时做一些操作
+                <span itemprop="name">ReactiveCocoa实践总结</span>
               
-            
-          </h1>
+            </a>
         
+      </h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T14:53:00+08:00">
-                2017-07-28
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2017-08-20T17:39:38+08:00"
+              content="2017-08-20" >
+          08-20
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的<code>dealloc</code>方法里调用该block，简单粗暴…<a id="more"></a>事后想了想能不能封装一个通用的方法给对象添加一个释放时调用的block呢？第一时间想到用Method Swizzling来hook对象的<code>dealloc</code>方法，马上领悟到这样未免侵入性太强，日后也许会导致难以排查的bug，仔细思考后想到了一个巧妙的方法，通过Category给<code>NSObject</code>公开一个添加block的方法，利用runtime的AssociatedObject给对象搭配一个‘‘小伙伴’’，在对象释放时，这个‘‘小伙伴’’负责调用block，这样既做到了与对象的共存亡又简单干净，上代码~<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">void</span>(^DeallocBlock)(<span class="keyword">void</span>);</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSObject</span> (<span class="title">Associate</span>)</span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">给对象添加释放时调用的block</div><div class="line">*/</div><div class="line">- (<span class="keyword">void</span>)addDeallocBlock:(DeallocBlock)deallocBlock;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"NSObject+Associate.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Partner</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) DeallocBlock deallocBlock;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Partner</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="keyword">if</span> (_deallocBlock) &#123;</div><div class="line">        _deallocBlock();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keyword">void</span> *kPartnerArrayKey = &amp;kPartnerArrayKey;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NSObject</span> (<span class="title">Associate</span>)</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addDeallocBlock:(DeallocBlock)deallocBlock &#123;</div><div class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</div><div class="line">        <span class="built_in">NSMutableArray</span> *partnerArray = objc_getAssociatedObject(<span class="keyword">self</span>, kPartnerArrayKey);</div><div class="line">        <span class="keyword">if</span> (!partnerArray) &#123;</div><div class="line">            partnerArray = [<span class="built_in">NSMutableArray</span> array];</div><div class="line">            objc_setAssociatedObject(<span class="keyword">self</span>, kPartnerArrayKey, partnerArray, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">        &#125;</div><div class="line">        Partner *partner = [[Partner alloc] init];</div><div class="line">        partner.deallocBlock = deallocBlock;</div><div class="line">        [partnerArray addObject:partner];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
-<p>这里有几点<strong>注意事项</strong>：<br>1.block触发时的线程与对象释放时的线程一致，注意后续操作的线程安全。<br>2.如果你想在block里引用对象，那么无论强弱引用都是不可行的，强引用会造成循环引用，弱引用则获取不到对象，因为已经被至为nil，可以使用<code>__unsafe_unretained</code>修饰：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">__<span class="keyword">unsafe_unretained</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) unsafeSelf = <span class="keyword">self</span>;</div></pre></td></tr></table></figure></p>
-<p>现在看起来比最开始的直接在CommentView的dealloc里做操作的想法成熟多了，但之后我再查阅相关资料时还是发现自己<em>too young too native</em>了…其实早就有大佬写了类似的框架，放个链接供大家膜<a href="https://github.com/ChenYilong/CYLDeallocBlockExecutor#%E4%BD%BF%E7%94%A8cyldeallocblockexecutor" target="_blank" rel="external">CYLDeallocBlockExecutor</a>，代码不是很复杂，但是考虑的点和实现思路很赞，也许这就是差距吧…其中涉及到了<code>NSHashTable</code>，不了解的可以看南大的<a href="http://southpeak.github.io/2015/05/10/ios-techset-1/" target="_blank" rel="external">iOS知识小集 第1期(2015.05.10)-NSHashTable部分</a>。</p>
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/runitme/" rel="tag"><i class="fa fa-tag"></i> runitme</a>
-          
-        </div>
-      
-
-      
-        
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/07/22/Runloop-Learning-summary/" rel="next" title="RunLoop学习总结">
-                <i class="fa fa-chevron-left"></i> RunLoop学习总结
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/08/05/pit-of-GCD/" rel="prev" title="GCD的一些坑">
-                GCD的一些坑 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
+    </header>
   </article>
 
 
-
-    <div class="post-spread">
-      
-    </div>
+    
   </div>
+
+  
 
 
           </div>
@@ -433,14 +314,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-       
-         <div id="gitment-container"></div>
-       
-    
-  </div>
-
 
         </div>
         
@@ -663,10 +536,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
 
   
 
