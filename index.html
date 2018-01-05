@@ -279,6 +279,131 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2018/11/17/WZRunLoopObserver/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Wonkey Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wonkey Zhang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/11/17/WZRunLoopObserver/" itemprop="url">
+                  WZRunLoopObserver
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-17T15:25:53+08:00">
+                2018-11-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>之前写的<a href="http://www.wonkeyz.com/2017/07/22/Runloop-Learning-summary/" target="_blank" rel="external">RunLoop学习总结</a>文章中提到了利用 RunLoop 解决在tableView中同时加载多个大图卡顿的方案<a href="https://github.com/diwu/RunLoopWorkDistribution" target="_blank" rel="external">RunLoopWorkDistribution</a>，它的解决思路是在一次 RunLoop 时候只绘制一张图片，这样每次 RunLoop 需要处理的操作变少，从而避免卡顿。受它的启发我最近写了一个方案来解决这个问题，与其相同的也是监听每次 RunLoop 的空闲时(<code>kCFRunLoopBeforeWaiting</code>)来完成一次任务，不同的是更加易用，支持功能更齐全，下面我来简单介绍下。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/11/17/WZRunLoopObserver/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/10/15/wxapp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1403,131 +1528,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/09/Runtime-Learning-summary-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Wonkey Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wonkey Zhang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/07/09/Runtime-Learning-summary-1/" itemprop="url">
-                  Runtime学习总结（一）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T11:00:35+08:00">
-                2017-07-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><code>Runtime</code>在业内有iOS开发‘‘黑科技’’之称，但在平时开发中也就接触了<code>Method Swizzling</code>，<code>AssociatedObject</code>这几种应用，用了这么久OC，却对它的内在一无所知，实在说不过去…今天我来总结一下最近学习<code>runtime</code>的知识点，看看它究竟‘‘黑’’在哪里。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/09/Runtime-Learning-summary-1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1577,7 +1577,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1590,7 +1590,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

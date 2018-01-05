@@ -64,7 +64,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="runitme," />
+  <meta name="keywords" content="RunLoop,卡顿," />
 
 
 
@@ -82,17 +82,17 @@
 
 
 
-<meta name="description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
-<meta name="keywords" content="runitme">
+<meta name="description" content="之前写的RunLoop学习总结文章中提到了利用 RunLoop 解决在tableView中同时加载多个大图卡顿的方案RunLoopWorkDistribution，它的解决思路是在一次 RunLoop 时候只绘制一张图片，这样每次 RunLoop 需要处理的操作变少，从而避免卡顿。受它的启发我最近写了一个方案来解决这个问题，与其相同的也是监听每次 RunLoop 的空闲时(kCFRun">
+<meta name="keywords" content="RunLoop,卡顿">
 <meta property="og:type" content="article">
-<meta property="og:title" content="在对象dealloc时做一些操作">
-<meta property="og:url" content="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/index.html">
+<meta property="og:title" content="WZRunLoopObserver">
+<meta property="og:url" content="http://wonkeyz.com/2018/11/17/WZRunLoopObserver/index.html">
 <meta property="og:site_name" content="Wonkey Zhang">
-<meta property="og:description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
-<meta property="og:updated_time" content="2017-10-19T07:14:06.505Z">
+<meta property="og:description" content="之前写的RunLoop学习总结文章中提到了利用 RunLoop 解决在tableView中同时加载多个大图卡顿的方案RunLoopWorkDistribution，它的解决思路是在一次 RunLoop 时候只绘制一张图片，这样每次 RunLoop 需要处理的操作变少，从而避免卡顿。受它的启发我最近写了一个方案来解决这个问题，与其相同的也是监听每次 RunLoop 的空闲时(kCFRun">
+<meta property="og:updated_time" content="2018-01-05T09:43:56.436Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在对象dealloc时做一些操作">
-<meta name="twitter:description" content="最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的dealloc方法里调用该block，简单粗暴…">
+<meta name="twitter:title" content="WZRunLoopObserver">
+<meta name="twitter:description" content="之前写的RunLoop学习总结文章中提到了利用 RunLoop 解决在tableView中同时加载多个大图卡顿的方案RunLoopWorkDistribution，它的解决思路是在一次 RunLoop 时候只绘制一张图片，这样每次 RunLoop 需要处理的操作变少，从而避免卡顿。受它的启发我最近写了一个方案来解决这个问题，与其相同的也是监听每次 RunLoop 的空闲时(kCFRun">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/"/>
+  <link rel="canonical" href="http://wonkeyz.com/2018/11/17/WZRunLoopObserver/"/>
 
 
 
 
 
-  <title> 在对象dealloc时做一些操作 | Wonkey Zhang </title>
+  <title> WZRunLoopObserver | Wonkey Zhang </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -279,7 +279,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/07/28/Do-some-operation-with -object-dealloc/">
+    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2018/11/17/WZRunLoopObserver/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Wonkey Zhang">
@@ -300,7 +300,7 @@
             
             
               
-                在对象dealloc时做一些操作
+                WZRunLoopObserver
               
             
           </h1>
@@ -315,8 +315,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T14:53:00+08:00">
-                2017-07-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-17T15:25:53+08:00">
+                2018-11-17
               </time>
             
 
@@ -351,10 +351,14 @@
       
 
       
-        <p>最近做直播间优化时遇到个奇葩需求，需要在评论输入视图释放时做一些操作，当时没想太多直接在CommentView外部公开一个block，然后在CommentView的<code>dealloc</code>方法里调用该block，简单粗暴…<a id="more"></a>事后想了想能不能封装一个通用的方法给对象添加一个释放时调用的block呢？第一时间想到用Method Swizzling来hook对象的<code>dealloc</code>方法，马上领悟到这样未免侵入性太强，日后也许会导致难以排查的bug，仔细思考后想到了一个巧妙的方法，通过Category给<code>NSObject</code>公开一个添加block的方法，利用runtime的AssociatedObject给对象搭配一个‘‘小伙伴’’，在对象释放时，这个‘‘小伙伴’’负责调用block，这样既做到了与对象的共存亡又简单干净，上代码~<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">void</span>(^DeallocBlock)(<span class="keyword">void</span>);</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSObject</span> (<span class="title">Associate</span>)</span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">给对象添加释放时调用的block</div><div class="line">*/</div><div class="line">- (<span class="keyword">void</span>)addDeallocBlock:(DeallocBlock)deallocBlock;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"NSObject+Associate.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Partner</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) DeallocBlock deallocBlock;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Partner</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="keyword">if</span> (_deallocBlock) &#123;</div><div class="line">        _deallocBlock();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keyword">void</span> *kPartnerArrayKey = &amp;kPartnerArrayKey;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NSObject</span> (<span class="title">Associate</span>)</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addDeallocBlock:(DeallocBlock)deallocBlock &#123;</div><div class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</div><div class="line">        <span class="built_in">NSMutableArray</span> *partnerArray = objc_getAssociatedObject(<span class="keyword">self</span>, kPartnerArrayKey);</div><div class="line">        <span class="keyword">if</span> (!partnerArray) &#123;</div><div class="line">            partnerArray = [<span class="built_in">NSMutableArray</span> array];</div><div class="line">            objc_setAssociatedObject(<span class="keyword">self</span>, kPartnerArrayKey, partnerArray, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">        &#125;</div><div class="line">        Partner *partner = [[Partner alloc] init];</div><div class="line">        partner.deallocBlock = deallocBlock;</div><div class="line">        [partnerArray addObject:partner];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
-<p>这里有几点<strong>注意事项</strong>：<br>1.block触发时的线程与对象释放时的线程一致，注意后续操作的线程安全。<br>2.如果你想在block里引用对象，那么无论强弱引用都是不可行的，强引用会造成循环引用，弱引用则获取不到对象，因为已经被至为nil，可以使用<code>__unsafe_unretained</code>修饰：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">__<span class="keyword">unsafe_unretained</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) unsafeSelf = <span class="keyword">self</span>;</div></pre></td></tr></table></figure></p>
-<p>现在看起来比最开始的直接在CommentView的dealloc里做操作的想法成熟多了，但之后我再查阅相关资料时还是发现自己<em>too young too native</em>了…其实早就有大佬写了类似的框架，放个链接供大家膜<a href="https://github.com/ChenYilong/CYLDeallocBlockExecutor#%E4%BD%BF%E7%94%A8cyldeallocblockexecutor" target="_blank" rel="external">CYLDeallocBlockExecutor</a>，代码不是很复杂，但是考虑的点和实现思路很赞，也许这就是差距吧…其中涉及到了<code>NSHashTable</code>，不了解的可以看南大的<a href="http://southpeak.github.io/2015/05/10/ios-techset-1/" target="_blank" rel="external">iOS知识小集 第1期(2015.05.10)-NSHashTable部分</a>。</p>
+        <p>之前写的<a href="http://www.wonkeyz.com/2017/07/22/Runloop-Learning-summary/" target="_blank" rel="external">RunLoop学习总结</a>文章中提到了利用 RunLoop 解决在tableView中同时加载多个大图卡顿的方案<a href="https://github.com/diwu/RunLoopWorkDistribution" target="_blank" rel="external">RunLoopWorkDistribution</a>，它的解决思路是在一次 RunLoop 时候只绘制一张图片，这样每次 RunLoop 需要处理的操作变少，从而避免卡顿。受它的启发我最近写了一个方案来解决这个问题，与其相同的也是监听每次 RunLoop 的空闲时(<code>kCFRunLoopBeforeWaiting</code>)来完成一次任务，不同的是更加易用，支持功能更齐全，下面我来简单介绍下。<br><a id="more"></a><br>先来看下接口:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">WZRunLoopObserver</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 主任务队列, observer不会移除</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main;</div><div class="line"> */</div><div class="line">+ (WZRunLoopObserver *)main;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 自定义队列, 当任务数为0时, 会在当前RunLoop循环n次后移除observer, n默认值为100</div><div class="line"> </div><div class="line"> WZRunLoopObserver.queue(@"com.wonkeyz.queue");</div><div class="line"> */</div><div class="line">+ (WZRunLoopObserver *(^)(<span class="built_in">NSString</span> *))queue;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 添加任务</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main.add(dispatch_block_t task).add(...);</div><div class="line"> */</div><div class="line">- (WZRunLoopObserver *(^)(dispatch_block_t))add;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 取消任务</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main.cancel(dispatch_block_t task)</div><div class="line"> */</div><div class="line">- (WZRunLoopObserver *(^)(dispatch_block_t))cancel;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 限制任务个数, 默认不限制, 超出后会移除先添加的任务</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main.limit(n).add(...);</div><div class="line"> */</div><div class="line">- (WZRunLoopObserver *(^)(<span class="built_in">NSUInteger</span>))limit;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 缓存超出限制的任务, 当任务队列不再超限时将缓存的任务添加到任务队列中, 默认关闭</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main.limit(10).cache.add(...);</div><div class="line"> */</div><div class="line">- (WZRunLoopObserver *(^)(<span class="built_in">BOOL</span>))cache;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 延迟调用任务, 在当前RunLoop循环n次后执行任务</div><div class="line"> </div><div class="line"> WZRunLoopObserver.main.delay(n).add(...);</div><div class="line"> */</div><div class="line">- (WZRunLoopObserver *(^)(<span class="built_in">NSUInteger</span>))delay;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
+<p>易用性体现在链式调用，这里我参考了<code>Masonry</code>，举个例子：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">- (WZRunLoopObserver *(^)(<span class="built_in">NSUInteger</span>))limit &#123;</div><div class="line">    <span class="keyword">return</span> ^<span class="keyword">id</span>(<span class="built_in">NSUInteger</span> limit)&#123;</div><div class="line">        _limitCount = limit;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">    &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>因为很多地方要用到这种返回<code>self</code>的block，所以我弄了个宏：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#define kRunLoopChainLockBlock(param, ...) \</span></div><div class="line">__<span class="keyword">weak</span> <span class="keyword">typeof</span>(&amp;*<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>; \</div><div class="line"><span class="keyword">return</span> ^<span class="keyword">id</span>(param)&#123; \</div><div class="line">__<span class="keyword">strong</span> <span class="keyword">typeof</span>(&amp;*weakSelf) <span class="keyword">self</span> = weakSelf; \</div><div class="line">dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER); \</div><div class="line">__VA_ARGS__ \</div><div class="line">dispatch_semaphore_signal(_lock); \</div><div class="line"><span class="keyword">return</span> <span class="keyword">self</span>; \</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>为了防止数据抢夺，宏里使用了<code>dispatch_semaphore_t</code>给数据的操作加了锁。</p>
+<p>功能更丰富体现在支持对任务个数的限制、缓存任务、延迟执行任务、取消任务的操作。</p>
+<p>核心代码：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)addObserverWithRunLoop:(<span class="built_in">CFRunLoopRef</span>)runloop &#123;</div><div class="line">    __<span class="keyword">weak</span> <span class="keyword">typeof</span>(&amp;*<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</div><div class="line">    </div><div class="line">    <span class="built_in">CFRunLoopObserverRef</span> observer = <span class="built_in">CFRunLoopObserverCreateWithHandler</span>(<span class="literal">NULL</span>, kCFRunLoopBeforeWaiting, <span class="literal">YES</span>, <span class="number">0</span>, ^(<span class="built_in">CFRunLoopObserverRef</span> observer, <span class="built_in">CFRunLoopActivity</span> activity) &#123;</div><div class="line">        </div><div class="line">        __<span class="keyword">strong</span> <span class="keyword">typeof</span>(&amp;*weakSelf) <span class="keyword">self</span> = weakSelf;</div><div class="line">        </div><div class="line">        <span class="comment">// 无任务执行</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.tasks.count == <span class="number">0</span>) <span class="keyword">return</span>;</div><div class="line">        </div><div class="line">        <span class="comment">// 延迟指定次数执行</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>-&gt;_delay &gt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">self</span>-&gt;_delay--;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="comment">// 执行任务</span></div><div class="line">        dispatch_block_t task = <span class="keyword">self</span>.tasks.firstObject;</div><div class="line">        task();</div><div class="line">        [<span class="keyword">self</span>.tasks removeObject:task];</div><div class="line">        </div><div class="line">        <span class="comment">// 添加缓存任务</span></div><div class="line">        <span class="keyword">if</span> (_isCache &amp;&amp; <span class="keyword">self</span>.caches.count) &#123;</div><div class="line">            <span class="keyword">id</span> cacheTask = <span class="keyword">self</span>.caches.firstObject;</div><div class="line">            [<span class="keyword">self</span>.tasks addObject:cacheTask];</div><div class="line">            [<span class="keyword">self</span>.caches removeObject:cacheTask];</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="comment">// 移除观察者</span></div><div class="line">        [<span class="keyword">self</span> removeObserver:observer];</div><div class="line">        </div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">CFRunLoopAddObserver</span>(runloop, observer, kCFRunLoopCommonModes);</div><div class="line">    <span class="built_in">CFRelease</span>(observer);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// tableView加载多张大图的情况</div><div class="line">WZRunLoopObserver.main.limit(50).cache(YES).add(^&#123;</div><div class="line">    imageView1.image = [UIImage imageWithContentsOfFile:path];</div><div class="line">&#125;).add(^&#123;</div><div class="line">    imageView2.image = [UIImage imageWithContentsOfFile:path];</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>整体逻辑还是很简单的，之后我会整理下把代码传上去，大家看代码就一目了然了。当然可能自己太水会有一些隐藏的坑在里面，大家谨慎使用，重在理解思路吧😂，日后我会抽空完善~</p>
 
       
     </div>
@@ -384,7 +388,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/runitme/" rel="tag"><i class="fa fa-tag"></i> runitme</a>
+            <a href="/tags/RunLoop/" rel="tag"><i class="fa fa-tag"></i> RunLoop</a>
+          
+            <a href="/tags/卡顿/" rel="tag"><i class="fa fa-tag"></i> 卡顿</a>
           
         </div>
       
@@ -397,8 +403,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/22/Runloop-Learning-summary/" rel="next" title="RunLoop学习总结">
-                <i class="fa fa-chevron-left"></i> RunLoop学习总结
+              <a href="/2017/10/15/wxapp/" rel="next" title="入坑小程序">
+                <i class="fa fa-chevron-left"></i> 入坑小程序
               </a>
             
           </div>
@@ -406,10 +412,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/08/05/pit-of-GCD/" rel="prev" title="GCD的一些坑">
-                GCD的一些坑 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
