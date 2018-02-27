@@ -3,6 +3,38 @@
   
     
     <entry>
+      <title><![CDATA[出来混总要还之哈希表]]></title>
+      <url>/2018/02/27/HashTable/</url>
+      <content type="html"><![CDATA[<p>最近面试被问到 <code>NSDictionary</code> 的实现原理，只回答到哈希表就卡带了…突然意识到以前学过的东西一点影响都没了…事后补充了一下这方面的知识，做一下总结，真是应了那句出来混总是要还的😂</p>
+<a id="more"></a>
+<h2 id="哈希表概念"><a href="#哈希表概念" class="headerlink" title="哈希表概念"></a>哈希表概念</h2><p>哈希表也叫散列表，是一种可以根据关键码去寻找值的数据映射结构，它维护者键和值之间一一对应的关系。它的原理是通过把关键码值映射到表中一个位置来访问记录，以加快查找的速度。这个映射函数叫做哈希（散列）函数，存放记录的数组叫做哈希表，数组中每个元素称为一个桶（bucket），桶中存放着键值对。<code>CoreFoundation</code> 中的桶：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">    CFIndex idx;</div><div class="line">    <span class="keyword">uintptr_t</span> weak_key;</div><div class="line">    <span class="keyword">uintptr_t</span> weak_value;</div><div class="line">    <span class="keyword">uintptr_t</span> count;</div><div class="line">&#125; CFBasicHashBucket;</div></pre></td></tr></table></figure></p>
+<p>简单举例就是根据 key 计算出哈希值 h，然后求出 n = h % m (哈希表容量)，那么这个键值对就存储在第 n 个桶里。列举几个经典的哈希函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">h1</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</div><div class="line">  <span class="keyword">return</span> (x % MOD);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 根据字符串ASCII码计算哈希值</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">h2</span><span class="params">(<span class="keyword">char</span>* x)</span></span>&#123;</div><div class="line">  <span class="keyword">int</span> i,sum;</div><div class="line">  <span class="keyword">for</span>(sum=<span class="number">0</span>, i=<span class="number">0</span>; x[i] != <span class="string">'\0'</span>; i++)</div><div class="line">    sum += (<span class="keyword">int</span>)x[i];</div><div class="line">  <span class="keyword">return</span> (sum % MOD);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="哈希冲突"><a href="#哈希冲突" class="headerlink" title="哈希冲突"></a>哈希冲突</h2><p>细心的你可能发现了，如果哈希表容量是5，那么通过上面函数 h1 计算出的 h1(7) 和 h1(12) 的位置时一样的，这就产生了哈希冲突，解决这种冲突的方法有开放定址法和拉链法。</p>
+<ul>
+<li>开放定址法：当发生冲突时，通过相应的函数在冲突地址后面的地址去找，直到没有冲突为止。这个方法常用的有线性探测，二次探测，再哈希。 这种解决方法的缺点是，当发生冲突之后，会在之后的地址空间中找一个放进去，这样就会出现两个不同的 key 存储位置却一样，再次发生冲突。</li>
+<li>拉链法：与开放定址法不同的是，每个桶中存放着一个链表，同一哈希值的键值对会被插入到链表中，这就避免了再次发生冲突。</li>
+</ul>
+<p>再补充一个概念：负载因子（load factor）= 哈希表中实际元素数目（n）/ 哈希表的容量（m）。这个值越大说明哈希表越满，越容易产生冲突，查询插入的性能随之降低，当该值大于某个值时（一般情况下建议Load factor的值为0-0.7， Java 中默认值为0.75），哈希表将自动扩容，一般自动扩容会将哈希表的容量翻倍，所以即使 key 哈希值不变，但对其取余后的值可能会改变，导致键值对的存储位置发生改变，这个过程叫作重哈希（rehash）。</p>
+<p>即使做了这么多还是避免不了一些极端的情况：1.如果哈希函数设计不合理，导致 key 的哈希值都一样，那么哈希表中实际上只存着一个链表，变成了一个线性表，查询性能极差。2.如果自动扩容影响的桶很多，重哈希会造成很大的性能开销。</p>
+<p>针对问题1，Java 对哈希表的设计一定程度上解决了这个问题，主要原理是当链表的长度大于8时会将其转换成红黑树，当小于6时再转换成链表。</p>
+<p>而在 Redis 中对字典的实现通过使用头插法和增量式扩容解决了链表查找和重哈希带来的性能问题，详见<a href="https://bestswifter.com/hashtable/" target="_blank" rel="external">深入理解哈希表</a></p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>再延伸一点关于重写 <code>isEqual</code> 方法的注意点，我们再给自定义对象重写 <code>isEqual</code> 方法时，往往会忽略重写它的 <code>hash</code> 方法，这会造成即使判断两个对象相等了，但当添加到 <code>NSSet</code> 中或设置 <code>NSDictioary</code> 的 key 时会得到两个不同的元素，原因是因为：为了优化判等的效率，基于 hash 的 <code>NSSet</code> 和 <code>NSDictionary</code> 在判断成员是否相等时，会先判断集成成员的 hash 值是否和目标 hash 值相等，如果相同再进行对象判等，如果不等，则直接判断不相等，从而 <code>NSSet</code> 过滤掉了重复的对象，<code>NSDictionary</code> 确保了 key 的唯一性。重写 <code>hash</code> 方法也不仅仅是 <code>[super hash]</code>，而是对关键属性的 hash 值进行位或运算作为 hash 值，详见<a href="https://www.jianshu.com/p/915356e280fc" target="_blank" rel="external">iOS开发 之 不要告诉我你真的懂isEqual与hash!</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://www.cnblogs.com/s-b-b/p/6208565.html" target="_blank" rel="external">数据结构之哈希表</a><br><a href="https://bestswifter.com/dictionary-implemation/" target="_blank" rel="external">Swift中字典的实现原理</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> HashTable </tag>
+            
+            <tag> 算法 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[APP崩溃后弹窗提示功能实现]]></title>
       <url>/2017/12/03/app-crash-handler/</url>
       <content type="html"><![CDATA[<p>当APP崩溃时，如果项目中集成的 crash 采集工具，我们可以通过 crash log 分析出闪退的原因，但是有些蛋疼的 bug 即使找到原因了也无法复现，这时候就希望有个人能告诉我们是怎么掉进这个程序猿挖的坑的，借助之前 RunLoop 的学习和 <code>NSSetUncaughtExceptionHandler()</code> 就可以简单实现这个需求，下面说下具体思路。</p>
