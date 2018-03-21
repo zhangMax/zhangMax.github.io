@@ -64,7 +64,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="RunLoop,Crash," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -82,19 +82,15 @@
 
 
 
-<meta name="description" content="当APP崩溃时，如果项目中集成的 crash 采集工具，我们可以通过 crash log 分析出闪退的原因，但是有些蛋疼的 bug 即使找到原因了也无法复现，这时候就希望有个人能告诉我们是怎么掉进这个程序猿挖的坑的，借助之前 RunLoop 的学习和 NSSetUncaughtExceptionHandler() 就可以简单实现这个需求，下面说下具体思路。">
-<meta name="keywords" content="RunLoop,Crash">
-<meta property="og:type" content="article">
-<meta property="og:title" content="APP崩溃后弹窗提示功能实现">
-<meta property="og:url" content="http://wonkeyz.com/2017/12/03/app-crash-handler/index.html">
+<meta name="description" content="没人能在我的bgm里打败我🤓">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Wonkey Zhang">
+<meta property="og:url" content="http://wonkeyz.com/archives/2018/03/index.html">
 <meta property="og:site_name" content="Wonkey Zhang">
-<meta property="og:description" content="当APP崩溃时，如果项目中集成的 crash 采集工具，我们可以通过 crash log 分析出闪退的原因，但是有些蛋疼的 bug 即使找到原因了也无法复现，这时候就希望有个人能告诉我们是怎么掉进这个程序猿挖的坑的，借助之前 RunLoop 的学习和 NSSetUncaughtExceptionHandler() 就可以简单实现这个需求，下面说下具体思路。">
-<meta property="og:image" content="http://owgqmweju.bkt.clouddn.com/18-2-8/98159040.jpg">
-<meta property="og:updated_time" content="2018-02-08T10:16:03.000Z">
+<meta property="og:description" content="没人能在我的bgm里打败我🤓">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="APP崩溃后弹窗提示功能实现">
-<meta name="twitter:description" content="当APP崩溃时，如果项目中集成的 crash 采集工具，我们可以通过 crash log 分析出闪退的原因，但是有些蛋疼的 bug 即使找到原因了也无法复现，这时候就希望有个人能告诉我们是怎么掉进这个程序猿挖的坑的，借助之前 RunLoop 的学习和 NSSetUncaughtExceptionHandler() 就可以简单实现这个需求，下面说下具体思路。">
-<meta name="twitter:image" content="http://owgqmweju.bkt.clouddn.com/18-2-8/98159040.jpg">
+<meta name="twitter:title" content="Wonkey Zhang">
+<meta name="twitter:description" content="没人能在我的bgm里打败我🤓">
 
 
 
@@ -122,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://wonkeyz.com/2017/12/03/app-crash-handler/"/>
+  <link rel="canonical" href="http://wonkeyz.com/archives/2018/03/"/>
 
 
 
 
 
-  <title> APP崩溃后弹窗提示功能实现 | Wonkey Zhang </title>
+  <title> 归档 | Wonkey Zhang </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -153,7 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left  page-archive  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -271,169 +267,66 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  <section id="posts" class="posts-collapse">
+    <span class="archive-move-on"></span>
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://wonkeyz.com/2017/12/03/app-crash-handler/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Wonkey Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wonkey Zhang">
+    <span class="archive-page-counter">
+      
+      
+      
+        
+      
+      嗯..! 目前共计 18 篇日志。 继续努力。
     </span>
 
     
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                APP崩溃后弹窗提示功能实现
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T16:44:59+08:00">
-                2017-12-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
 
       
       
-
       
-        <p>当APP崩溃时，如果项目中集成的 crash 采集工具，我们可以通过 crash log 分析出闪退的原因，但是有些蛋疼的 bug 即使找到原因了也无法复现，这时候就希望有个人能告诉我们是怎么掉进这个程序猿挖的坑的，借助之前 RunLoop 的学习和 <code>NSSetUncaughtExceptionHandler()</code> 就可以简单实现这个需求，下面说下具体思路。</p>
-<a id="more"></a>
-<p>sunnyxx 在<a href="http://v.youku.com/v_show/id_XODgxODkzODI0.html?spm=a2h0k.8191407.0.0&amp;from=s1.8-1-1.2" target="_blank" rel="external">RunLoop讲解视频</a>中提到了一个黑科技“让 App 在 Crash 的时候回光返照”，实现思路是对于因为接收到 crash 的 signal 而挂掉的程序，可以在接收到  signal 之后重新起一个 runLoop 然后跑起来。但是这个并不能保证 app 能像原来一样能正常运行，只能是利用它来在奄奄一息的状态下弹出一些友好的错误信息。主要代码如下：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 取出当前runLoop</span></div><div class="line"><span class="built_in">CFRunLoopRef</span> runLoop = <span class="built_in">CFRunLoopGetCurrent</span>();</div><div class="line"><span class="comment">// 取出runLoop所有运行的mode</span></div><div class="line"><span class="built_in">NSArray</span> *allModes = <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CFRunLoopCopyAllModes</span>(runLoop));</div><div class="line"><span class="keyword">while</span> (<span class="number">1</span>) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">NSString</span> *mode <span class="keyword">in</span> allModes) &#123;</div><div class="line">    <span class="comment">//在每个 mode 中轮流运行至少 0.001 秒</span></div><div class="line">        <span class="built_in">CFRunLoopRunInMode</span>((<span class="built_in">CFStringRef</span>)mode, <span class="number">0.001</span>, <span class="literal">false</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>拿按钮点击按钮调用 unrecognized selector 为例，捕获到的调用栈如下：<img src="http://owgqmweju.bkt.clouddn.com/18-2-8/98159040.jpg" alt="图1"></p>
-<p>可以看到，RunLoop 在 Source0 中处理点击事件，调用了未定义的 selector 之后经过一系列消息转发，最后调用 <code>objc_exception_throw</code> 抛出了异常。</p>
-<p>那么我们如何捕获这个异常呢？通过查阅发下 <code>Foundation</code> 提供的 <code>NSSetUncaughtExceptionHandler()</code> 方法可以截获到这个异常。再加上上面提到的“起死回生”，就可以做到我们的需求了，代码如下：</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> UncaughtExceptionHandler(<span class="built_in">NSException</span> *exception) &#123;</div><div class="line">    </div><div class="line">    __block <span class="built_in">BOOL</span> canRun = <span class="literal">YES</span>;</div><div class="line">    </div><div class="line">    <span class="built_in">CFRunLoopRef</span> runLoop = <span class="built_in">CFRunLoopGetCurrent</span>();</div><div class="line">    <span class="built_in">NSArray</span> *allMode = <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CFRunLoopCopyAllModes</span>(runLoop));</div><div class="line">    </div><div class="line">    <span class="built_in">UIAlertController</span> *alert = [<span class="built_in">UIAlertController</span> alertControllerWithTitle:<span class="string">@"Sorry!"</span> message:<span class="string">@"Your app crashed!"</span> preferredStyle:<span class="built_in">UIAlertControllerStyleAlert</span>];</div><div class="line">    </div><div class="line">    [alert addAction:[<span class="built_in">UIAlertAction</span> actionWithTitle:<span class="string">@"Report"</span> style:<span class="built_in">UIAlertActionStyleDefault</span> handler:^(<span class="built_in">UIAlertAction</span> * _Nonnull action) &#123;</div><div class="line">        <span class="comment">// 做一些上报操作</span></div><div class="line">        <span class="comment">// 调用堆栈</span></div><div class="line">        <span class="built_in">NSArray</span> *callStack = [exception callStackSymbols];</div><div class="line">        <span class="comment">// crash原因</span></div><div class="line">        <span class="built_in">NSString</span> *reason = [exception reason];</div><div class="line">        <span class="comment">// 异常名称</span></div><div class="line">        <span class="built_in">NSString</span> *name = [exception name];</div><div class="line">    &#125;]];</div><div class="line"></div><div class="line">    [alert addAction:[<span class="built_in">UIAlertAction</span> actionWithTitle:<span class="string">@"Bye!"</span> style:<span class="built_in">UIAlertActionStyleCancel</span> handler:^(<span class="built_in">UIAlertAction</span> * _Nonnull action) &#123;</div><div class="line">        canRun = <span class="literal">NO</span>;</div><div class="line">    &#125;]];</div><div class="line">    </div><div class="line">    <span class="built_in">UIViewController</span> *rootViewController = [<span class="built_in">UIApplication</span> sharedApplication].keyWindow.rootViewController;</div><div class="line">    [rootViewController presentViewController:alert animated:<span class="literal">YES</span> completion:<span class="literal">nil</span>];</div><div class="line">    </div><div class="line">    <span class="keyword">while</span> (canRun) &#123;</div><div class="line">        <span class="keyword">for</span> (<span class="built_in">NSString</span> *mode <span class="keyword">in</span> allMode) &#123;</div><div class="line">            <span class="built_in">CFRunLoopRunInMode</span>((<span class="built_in">CFStringRef</span>)mode, <span class="number">0.001</span>, <span class="literal">NO</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">BOOL</span>)application:(<span class="built_in">UIApplication</span> *)application didFinishLaunchingWithOptions:(<span class="built_in">NSDictionary</span> *)launchOptions &#123;</div><div class="line">    </div><div class="line">    <span class="built_in">NSSetUncaughtExceptionHandler</span>(&amp;UncaughtExceptionHandler);</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>关于 <code>NSSetUncaughtExceptionHandler()</code> 要注意的一点是它只对 <code>Foundation</code> 对象的异常有效，所以这个方法只对 <code>NSException</code> 起作用，对于 <code>BAD_ACCESS</code>、<code>std::terminate()</code> 等非 <code>Foundation</code> 异常是无法捕获的。</p>
 
-      
-    </div>
-
-    <div>
       
         
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/RunLoop/" rel="tag"><i class="fa fa-tag"></i> RunLoop</a>
-          
-            <a href="/tags/Crash/" rel="tag"><i class="fa fa-tag"></i> Crash</a>
-          
+        <div class="collection-title">
+          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
         </div>
       
+      
 
       
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
-      
+            <a class="post-title-link" href="/2018/03/21/test/" itemprop="url">
+              
+                <span itemprop="name">test</span>
+              
+            </a>
+        
+      </h1>
 
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/11/17/WZRunLoopObserver/" rel="next" title="WZRunLoopObserver">
-                <i class="fa fa-chevron-left"></i> WZRunLoopObserver
-              </a>
-            
-          </div>
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2018-03-21T17:42:04+08:00"
+              content="2018-03-21" >
+          03-21
+        </time>
+      </div>
 
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/02/27/HashTable/" rel="prev" title="出来混总要还之哈希表">
-                出来混总要还之哈希表 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
+    </header>
   </article>
 
 
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+    
+
+  </section>
+
+  
+
 
 
           </div>
@@ -441,14 +334,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-       
-         <div id="gitment-container"></div>
-       
-    
-  </div>
-
 
         </div>
         
@@ -671,9 +556,11 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
+  
+    <script type="text/javascript" id="motion.page.archive">
+      $('.archive-year').velocity('transition.slideLeftIn');
+    </script>
+  
 
 
   
