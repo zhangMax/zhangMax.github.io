@@ -89,7 +89,7 @@
 <meta property="og:url" content="http://wonkeyz.com/2017/08/05/pit-of-GCD/index.html">
 <meta property="og:site_name" content="Wonkey Zhang">
 <meta property="og:description" content="开发中我们用到最多的实现多线程方式就是GCD了，用多了遇到的坑也就多，下面我来总结一些使用GCD时可能遇到的坑和注意点，以防万一。 GCD与AutoreleasePool我们知道在使用NSThread时，需要在线程调度方法中手动添加AutoreleasePool，防止内存泄漏，那么GCD需要吗？答案是不，因为在主线程和GCD中的线程，都默认拥有自动释放池。每次执行事件循环时，就会将其清空。">
-<meta property="og:updated_time" content="2017-12-20T03:15:59.400Z">
+<meta property="og:updated_time" content="2017-12-20T03:15:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCD的一些坑">
 <meta name="twitter:description" content="开发中我们用到最多的实现多线程方式就是GCD了，用多了遇到的坑也就多，下面我来总结一些使用GCD时可能遇到的坑和注意点，以防万一。 GCD与AutoreleasePool我们知道在使用NSThread时，需要在线程调度方法中手动添加AutoreleasePool，防止内存泄漏，那么GCD需要吗？答案是不，因为在主线程和GCD中的线程，都默认拥有自动释放池。每次执行事件循环时，就会将其清空。">
